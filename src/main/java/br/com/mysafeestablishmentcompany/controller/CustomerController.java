@@ -4,17 +4,14 @@ import br.com.mysafeestablishmentcompany.domain.Customer;
 import br.com.mysafeestablishmentcompany.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/public/customer")
+@CrossOrigin
 public class CustomerController {
 
-    CustomerService customerService;
+    final CustomerService customerService;
 
     @Autowired
     public CustomerController(CustomerService customerService){
