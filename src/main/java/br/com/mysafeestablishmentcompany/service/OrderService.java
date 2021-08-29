@@ -4,6 +4,7 @@ import br.com.mysafeestablishmentcompany.api.request.OrdersRequest;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.domain.Product;
+import br.com.mysafeestablishmentcompany.exception.OrderPadNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.OrderPadRepository;
 import br.com.mysafeestablishmentcompany.repository.OrderRepository;
 import br.com.mysafeestablishmentcompany.repository.ProductRepository;
@@ -47,7 +48,7 @@ public class OrderService {
     public OrderPad searchOrderPad(long customerId) throws Exception{
         OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(customerId,"0");
         if (orderPad == null){
-            throw new Exception("Não ha comanda aberta para esse usuario");
+            throw new OrderPadNotFoundException("Não ha comanda aberta para esse usuario");
         }
         return orderPad;
     }
