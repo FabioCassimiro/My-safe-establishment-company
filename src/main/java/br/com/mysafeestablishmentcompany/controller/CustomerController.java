@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequestMapping("/public/customer")
 public class CustomerController {
 
     CustomerService customerService;
@@ -19,12 +21,12 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PostMapping("/public/customer/register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Customer customer) {
         return customerService.register(customer);
     }
 
-    @PostMapping("/public/customer/login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Customer customer) {
         return customerService.login(customer);
     }
