@@ -1,30 +1,50 @@
 package br.com.mysafeestablishmentcompany.api.request;
 
-import br.com.mysafeestablishmentcompany.domain.Customer;
-
 public class CustomerRequest {
 
-    private Customer customer;
+    private String name;
+    private String phoneNumber;
+    private String cpf;
 
-    public CustomerRequest(Customer customer) {
-        this.customer = customer;
+    public CustomerRequest(String name, String phoneNumber, String cpf) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.cpf = cpf;
     }
 
     public CustomerRequest() {
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public String getName() {
+        return name;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     @Override
     public String toString() {
         return "CustomerRequest{" +
-                "customer=" + customer +
+                "name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", cpf='" + cpf + '\'' +
                 '}';
     }
 }

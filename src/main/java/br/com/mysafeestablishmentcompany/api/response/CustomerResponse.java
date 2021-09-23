@@ -1,29 +1,38 @@
 package br.com.mysafeestablishmentcompany.api.response;
 
-import br.com.mysafeestablishmentcompany.domain.Customer;
-
 public class CustomerResponse extends ErrorResponse {
 
-    private Customer customer;
+    private String name;
+    private Long customerId;
     private String token;
 
-    public CustomerResponse(Customer customer, String token) {
-        this.customer = customer;
+    public CustomerResponse(String name, Long customerId, String token) {
+        this.name = name;
+        this.customerId = customerId;
         this.token = token;
     }
 
     public CustomerResponse(String errorMessage) {
         super(errorMessage);
-        this.customer = null;
+        this.name = null;
+        this.customerId = null;
         this.token = null;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public String getName() {
+        return name;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public String getToken() {
@@ -37,7 +46,8 @@ public class CustomerResponse extends ErrorResponse {
     @Override
     public String toString() {
         return "CustomerResponse{" +
-                "customer=" + customer +
+                "name='" + name + '\'' +
+                ", customerId=" + customerId +
                 ", token='" + token + '\'' +
                 '}';
     }
