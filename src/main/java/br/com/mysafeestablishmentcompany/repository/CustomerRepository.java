@@ -8,8 +8,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     Customer findCustomerByCpfOrPhoneNumber(String cpf, String phoneNumber);
 
-    Customer findCustomerByCpfAndPhoneNumber(String cpf, String phoneNumber);
-
     Customer findById(long id);
 
+    Customer findByCpf(String cpf);
 }

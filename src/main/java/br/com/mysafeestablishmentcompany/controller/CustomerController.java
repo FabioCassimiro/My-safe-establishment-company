@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.controller;
 
-import br.com.mysafeestablishmentcompany.domain.Customer;
+import br.com.mysafeestablishmentcompany.api.request.CustomerRequest;
+import br.com.mysafeestablishmentcompany.api.response.CustomerResponse;
 import br.com.mysafeestablishmentcompany.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,12 @@ public class CustomerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Customer customer) {
+    public ResponseEntity<CustomerResponse> register(@RequestBody CustomerRequest customer) {
         return customerService.register(customer);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Customer customer) {
+    public ResponseEntity<CustomerResponse> login(@RequestBody CustomerRequest customer) {
         return customerService.login(customer);
     }
 
