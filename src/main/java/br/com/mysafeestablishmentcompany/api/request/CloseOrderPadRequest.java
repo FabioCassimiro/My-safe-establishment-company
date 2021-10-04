@@ -1,9 +1,14 @@
 package br.com.mysafeestablishmentcompany.api.request;
 
+import com.sun.istack.NotNull;
+
 public class CloseOrderPadRequest {
 
+    @NotNull
     private long customerId;
+    @NotNull
     private String payment;
+    @NotNull
     private double tip;
 
     public long getCustomerId() {
@@ -30,6 +35,4 @@ public class CloseOrderPadRequest {
         this.tip = tip;
     }
 
-    public CloseOrderPadRequest() {
-    }
 }
