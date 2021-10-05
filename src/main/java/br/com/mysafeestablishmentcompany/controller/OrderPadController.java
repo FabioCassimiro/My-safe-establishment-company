@@ -25,17 +25,17 @@ public class OrderPadController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CreateOrderPadResponse> createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) {
+    public CreateOrderPadResponse createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) {
         return orderPadService.createOrderPad(createOrderPadRequest);
     }
 
     @PostMapping("/close")
-    public ResponseEntity<CloseOrderPadResponse> closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) {
+    public CloseOrderPadResponse closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) {
         return orderPadService.closeOrderPad(closeOrderPadRequest);
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<PaymentOrderPadResponse> paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest){
+    public PaymentOrderPadResponse paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest){
         return orderPadService.paymentOrderPad(paymentOrderPadRequest);
     }
 

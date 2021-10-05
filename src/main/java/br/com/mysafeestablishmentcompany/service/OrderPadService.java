@@ -18,8 +18,6 @@ import br.com.mysafeestablishmentcompany.repository.TableEstablishmentRepository
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -39,13 +37,12 @@ public class OrderPadService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<CreateOrderPadResponse> createOrderPad(CreateOrderPadRequest createOrderPadRequest) {
+    public CreateOrderPadResponse createOrderPad(CreateOrderPadRequest createOrderPadRequest) {
         try {
             Customer customer = findCustomer(createOrderPadRequest.getCustomerId());
-            CreateOrderPadResponse orderPad = saveOrderPad(createOrderPadRequest, customer);
-            return new ResponseEntity<>(orderPad, HttpStatus.CREATED);
+            return saveOrderPad(createOrderPadRequest, customer);
         } catch (Exception e) {
-            return new ResponseEntity<>(new CreateOrderPadResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new CreateOrderPadResponse(e.getMessage());
         }
     }
 
@@ -93,15 +90,14 @@ public class OrderPadService {
         return tableEstablishment;
     }
 
-    public ResponseEntity<CloseOrderPadResponse> closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) {
+    public CloseOrderPadResponse closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) {
 
         try {
             Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
             final OrderPad orderPad = getOrderPad(closeOrderPadRequest);
-            CloseOrderPadResponse closeOrderPadResponse = saveClosureOrderPad(closeOrderPadRequest, orderPad);
-            return new ResponseEntity<>(closeOrderPadResponse, HttpStatus.OK);
+            return saveClosureOrderPad(closeOrderPadRequest, orderPad);
         } catch (Exception e) {
-            return new ResponseEntity<>(new CloseOrderPadResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new CloseOrderPadResponse(e.getMessage());
         }
 
     }
@@ -139,14 +135,13 @@ public class OrderPadService {
         orderPad.setValue(orderPad.getValue() + orderPad.getRate() + orderPad.getTip());
     }
 
-    public ResponseEntity<PaymentOrderPadResponse> paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) {
+    public PaymentOrderPadResponse paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) {
         try {
             Customer customer = findCustomer(paymentOrderPadRequest.getCustomerId());
             OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
-            PaymentOrderPadResponse paymentOrderPadResponse = savePaymentOrderPad(orderPad,paymentOrderPadRequest);
-            return new ResponseEntity<>(paymentOrderPadResponse, HttpStatus.OK);
+            return savePaymentOrderPad(orderPad, paymentOrderPadRequest);
         } catch (Exception e) {
-            return new ResponseEntity<>(new PaymentOrderPadResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new PaymentOrderPadResponse(e.getMessage());
         }
     }
 
@@ -159,7 +154,7 @@ public class OrderPadService {
     }
 
     private PaymentOrderPadResponse savePaymentOrderPad(OrderPad orderPad, PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
-        validateValuePayment(orderPad.getValue(),paymentOrderPadRequest.getValuePayment());
+        validateValuePayment(orderPad.getValue(), paymentOrderPadRequest.getValuePayment());
         orderPad.setStatus(CompanyUtils.PAID);
         removeResenvationTable(orderPad.getTableId());
         return new PaymentOrderPadResponse(orderPadRepository.save(orderPad));
@@ -167,11 +162,11 @@ public class OrderPadService {
 
     private void validateValuePayment(double orderPadValue, double valuePayment) throws Exception {
         if (orderPadValue != valuePayment) {
-             throw new Exception("Valor pago menor que o valor da comanda - Valor comanda: R$ " + orderPadValue);
+            throw new Exception("Valor pago menor que o valor da comanda - Valor comanda: R$ " + orderPadValue);
         }
     }
 
-    public void removeResenvationTable(long tableId){
+    public void removeResenvationTable(long tableId) {
         TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
         tableEstablishment.setStatusTable(CompanyUtils.TABLE_AVALIABLE_STATUS);
         tableEstablishmentRepository.save(tableEstablishment);
