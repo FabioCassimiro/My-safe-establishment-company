@@ -23,8 +23,8 @@ public class ProductController {
         return productService.allProducts();
     }
 
-    @GetMapping("/product")
-    public Product productById(@RequestParam() Long id){
+    @GetMapping("/product/{id}")
+    public Product productById(@PathVariable() Long id){
         return productService.product(id);
     }
 
@@ -33,8 +33,8 @@ public class ProductController {
         return productService.register(product);
     }
 
-    @DeleteMapping("/product/delete")
-    public String delectProduct(@RequestParam() Long id){
+    @DeleteMapping("/product/delete/{id}")
+    public String delectProduct(@PathVariable() Long id){
         return productService.delete(id);
     }
 
