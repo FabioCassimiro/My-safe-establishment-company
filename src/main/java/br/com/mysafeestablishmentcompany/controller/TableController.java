@@ -30,17 +30,17 @@ public class TableController {
     }
 
     @PostMapping("/table/register")
-    public ResponseEntity<String> registerTable(@RequestBody TableEstablishment tableEstablishment) {
+    public TableEstablishment registerTable(@RequestBody TableEstablishment tableEstablishment) {
         return tableService.register(tableEstablishment);
     }
 
     @DeleteMapping("/table/delete/{id}")
-    public ResponseEntity<String> deleteTable(@PathVariable Long id) {
+    public String deleteTable(@PathVariable Long id) {
         return tableService.delete(id);
     }
 
     @PutMapping("/table/update")
-    public ResponseEntity<String> updateTable(@RequestBody TableEstablishment tableEstablishment) {
+    public String updateTable(@RequestBody TableEstablishment tableEstablishment) {
         return tableService.update(tableEstablishment);
     }
 
