@@ -10,13 +10,13 @@ import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.service.OrderPadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/private/orderpad")
 @CrossOrigin
 public class OrderPadController {
-
 
     private final OrderPadService orderPadService;
 
@@ -39,6 +39,6 @@ public class OrderPadController {
     public OrderPad paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
         return orderPadService.paymentOrderPad(paymentOrderPadRequest);
     }
-
-
+  
+  
 }
