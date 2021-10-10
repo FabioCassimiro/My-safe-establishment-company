@@ -10,7 +10,12 @@ public class Product extends AbstractEntity {
     private String name;
     private String typeProduct;
     private String description;
+    private String ingredients;
     private double value;
+
+    public Product() {
+
+    }
 
     public String getName() {
         return name;
@@ -36,6 +41,14 @@ public class Product extends AbstractEntity {
         this.description = description;
     }
 
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
     public double getValue() {
         return value;
     }
@@ -44,14 +57,12 @@ public class Product extends AbstractEntity {
         this.value = value;
     }
 
-    public Product(String name, String typeProduct, String description, double value) {
+    public Product(String name, String typeProduct, String description, String ingredients, double value) {
         this.name = name;
         this.typeProduct = typeProduct;
         this.description = description;
+        this.ingredients = ingredients;
         this.value = value;
-    }
-
-    public Product() {
     }
 
     @Override
@@ -60,6 +71,7 @@ public class Product extends AbstractEntity {
                 "name='" + name + '\'' +
                 ", typeProduct='" + typeProduct + '\'' +
                 ", description='" + description + '\'' +
+                ", ingredients='" + ingredients + '\'' +
                 ", value=" + value +
                 '}';
     }
