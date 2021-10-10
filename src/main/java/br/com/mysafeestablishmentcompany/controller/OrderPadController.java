@@ -3,17 +3,19 @@ package br.com.mysafeestablishmentcompany.controller;
 import br.com.mysafeestablishmentcompany.api.request.CloseOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.CreateOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
+import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
+import br.com.mysafeestablishmentcompany.api.response.CreateOrderPadResponse;
+import br.com.mysafeestablishmentcompany.api.response.PaymentOrderPadResponse;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.service.OrderPadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("private/orderpad")
+@RequestMapping("/private/orderpad")
+@CrossOrigin
 public class OrderPadController {
 
     private final OrderPadService orderPadService;
@@ -24,19 +26,19 @@ public class OrderPadController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) {
+    public OrderPad createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) throws Exception {
         return orderPadService.createOrderPad(createOrderPadRequest);
     }
 
     @PostMapping("/close")
-    public ResponseEntity closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) {
+    public OrderPad closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) throws Exception {
         return orderPadService.closeOrderPad(closeOrderPadRequest);
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<String> paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest) {
+    public OrderPad paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
         return orderPadService.paymentOrderPad(paymentOrderPadRequest);
     }
-
-
+  
+  
 }

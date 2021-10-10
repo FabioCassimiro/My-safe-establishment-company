@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/private/owner/tables")
+@RequestMapping("/private/owner")
 public class TableController {
 
     final TableService tableService;
@@ -19,28 +19,28 @@ public class TableController {
         this.tableService = tableService;
     }
 
-    @GetMapping()
+    @GetMapping("/tables")
     public ArrayList<TableEstablishment> allTables() {
         return tableService.allTableEstablishments();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/table/{id}")
     public TableEstablishment tableById(@PathVariable Long id) {
         return tableService.table(id);
     }
 
-    @PostMapping()
-    public ResponseEntity<String> registerTable(@RequestBody TableEstablishment tableEstablishment) {
+    @PostMapping("/table/register")
+    public TableEstablishment registerTable(@RequestBody TableEstablishment tableEstablishment) {
         return tableService.register(tableEstablishment);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTable(@PathVariable Long id) {
+    @DeleteMapping("/table/delete/{id}")
+    public String deleteTable(@PathVariable Long id) {
         return tableService.delete(id);
     }
 
-    @PutMapping()
-    public ResponseEntity<String> updateTable(@RequestBody TableEstablishment tableEstablishment) {
+    @PutMapping("/table/update")
+    public String updateTable(@RequestBody TableEstablishment tableEstablishment) {
         return tableService.update(tableEstablishment);
     }
 
