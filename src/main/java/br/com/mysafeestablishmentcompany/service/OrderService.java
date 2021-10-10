@@ -4,6 +4,7 @@ import br.com.mysafeestablishmentcompany.api.request.OrdersRequest;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.domain.Product;
+import br.com.mysafeestablishmentcompany.exception.OrderPadNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.OrderPadRepository;
 import br.com.mysafeestablishmentcompany.repository.OrderRepository;
 import br.com.mysafeestablishmentcompany.repository.ProductRepository;
@@ -28,7 +29,7 @@ public class OrderService {
         this.orderPadRepository = orderPadRepository;
     }
 
-    public ResponseEntity<String> register(OrdersRequest ordersRequest){
+    public String register(OrdersRequest ordersRequest){
         try{
             OrderPad orderPad = searchOrderPad(ordersRequest.getCustomerId());
             for (Order order : ordersRequest.getOrders()) {
@@ -38,27 +39,26 @@ public class OrderService {
             }
             updateOrderPad(orderPad);
         }catch (Exception e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return e.getMessage();
         }
-
-        return new ResponseEntity<String>("Pedido(s) criado(s)", HttpStatus.CREATED);
+        return "Pedido(s) criado(s)";
     }
 
-    public OrderPad searchOrderPad(long customerId) throws Exception{
+    private OrderPad searchOrderPad(long customerId) throws Exception{
         OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(customerId,"0");
         if (orderPad == null){
-            throw new Exception("Não ha comanda aberta para esse usuario");
+            throw new OrderPadNotFoundException("Não ha comanda aberta para esse usuario");
         }
         return orderPad;
     }
 
-    public void calculateOrder(Order order){
+    private void calculateOrder(Order order){
         Product product = productRepository.findProductById(order.getProductId());
         order.setProductName(product.getName());
         order.setValue(product.getValue() * order.getQuantity());
     }
 
-    public void updateOrderPad(OrderPad orderPad){
+    private void updateOrderPad(OrderPad orderPad){
         double valueOrders = 0;
         final ArrayList<Order> orders = orderRepository.findByOrderPadId(orderPad.getId());
         for (Order order: orders) {
@@ -66,5 +66,15 @@ public class OrderService {
         }
         orderPad.setValue(valueOrders);
         orderPadRepository.save(orderPad);
+    }
+
+    public ArrayList<Order> allOrders(long customerId) throws Exception {
+        OrderPad orderPadDTO = searchOrderPad(customerId);
+        return orderRepository.findByOrderPadId(orderPadDTO.getId());
+    }
+
+    public Order orderById(long customerId,long orderId) throws Exception {
+        OrderPad orderPadDTO = searchOrderPad(customerId);
+        return orderRepository.findOrderById(orderId);
     }
 }
