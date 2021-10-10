@@ -4,30 +4,28 @@ package br.com.mysafeestablishmentcompany.service;
 import br.com.mysafeestablishmentcompany.api.request.CloseOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.CreateOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
+import br.com.mysafeestablishmentcompany.domain.CompanyUtils;
 import br.com.mysafeestablishmentcompany.domain.Customer;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
+import br.com.mysafeestablishmentcompany.exception.CustomerNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.CustomerRepository;
 import br.com.mysafeestablishmentcompany.repository.OrderPadRepository;
 import br.com.mysafeestablishmentcompany.repository.TableEstablishmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class OrderPadService {
     private final Logger logger = LoggerFactory.getLogger(OrderPadService.class);
 
-    OrderPadRepository orderPadRepository;
-    TableEstablishmentRepository tableEstablishmentRepository;
-    CustomerRepository customerRepository;
-
-    private final double TAX_RATE = 0.10;
-    private final String AWAIT_PAYMENT_STATUS = "1";
-    private final String OPEN_STATUS = "0";
+    private final OrderPadRepository orderPadRepository;
+    private final TableEstablishmentRepository tableEstablishmentRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public OrderPadService(OrderPadRepository orderPadRepository, TableEstablishmentRepository tableEstablishmentRepository, CustomerRepository customerRepository) {
@@ -36,62 +34,125 @@ public class OrderPadService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseEntity<String> createOrderPad(CreateOrderPadRequest createOrderPadRequest){
-        OrderPad orderPad = new OrderPad();
-        Customer customer = customerRepository.findById(createOrderPadRequest.getCustomerId());
+    public OrderPad createOrderPad(CreateOrderPadRequest createOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(createOrderPadRequest.getCustomerId());
+        return saveOrderPad(createOrderPadRequest, customer);
+    }
 
+    private Customer findCustomer(long customerId) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findById(customerId);
+        if (Objects.isNull(customer)) {
+            throw new CustomerNotFoundException("Customer não encontrado");
+        }
+        return customer;
+    }
+
+    private OrderPad saveOrderPad(CreateOrderPadRequest createOrderPadRequest, Customer customer) throws Exception {
+        OrderPad orderPad = new OrderPad();
+        OrderPad orderPadDTO = orderPadRepository.findByCustomerIdAndStatus(customer.getId(), CompanyUtils.OPEN);
+        if (!Objects.isNull(orderPadDTO)) {
+            throw new Exception("Customer já tem OrderPad em aberto");
+        }
         orderPad.setCustomerId(customer.getId());
         orderPad.setCustomerName(customer.getName());
-        orderPad.setStatus(OPEN_STATUS);
+        orderPad.setStatus(CompanyUtils.OPEN);
+        validateQuantityCustomers(createOrderPadRequest);
         orderPad.setQuantityCustomer(createOrderPadRequest.getQuantityCustomer());
         reservationTable(createOrderPadRequest.getTableId());
         orderPad.setTableId(createOrderPadRequest.getTableId());
-        orderPadRepository.save(orderPad);
-
-        return new ResponseEntity<String>("comanda criada com sucesso!", HttpStatus.CREATED);
+        return orderPadRepository.save(orderPad);
     }
 
-    public ResponseEntity<OrderPad> closeOrderPad(CloseOrderPadRequest closeOrderPadRequest){
+    private void validateQuantityCustomers(CreateOrderPadRequest createOrderPadRequest) throws Exception {
+        if (createOrderPadRequest.getQuantityCustomer() <= 0) {
+            throw new Exception("Numero de customers deve ser maior que 0");
+        }
+    }
 
-        final OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(closeOrderPadRequest.getCustomerId(),"0");
+    private void reservationTable(long tableId) throws Exception {
+        TableEstablishment tableEstablishment = getTableEstablishment(tableId);
+        tableEstablishment.setStatusTable(CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
+        tableEstablishmentRepository.save(tableEstablishment);
+    }
 
-        orderPad.setPayment(closeOrderPadRequest.getPayment());
+    private TableEstablishment getTableEstablishment(long tableId) throws Exception {
+        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_AVALIABLE_STATUS);
+        if (Objects.isNull(tableEstablishment)) {
+            throw new Exception("Table: " + tableId + "Não disponivel");
+        }
+        return tableEstablishment;
+    }
+
+    public OrderPad closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
+        final OrderPad orderPad = getOrderPad(closeOrderPadRequest);
+        return saveClosureOrderPad(closeOrderPadRequest, orderPad);
+    }
+
+    private OrderPad saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
+        orderPad.setPaymentMethod(validatePaymentMethod(closeOrderPadRequest.getPaymentMethod()));
         orderPad.setTip(closeOrderPadRequest.getTip());
-        orderPad.setStatus(AWAIT_PAYMENT_STATUS);
+        orderPad.setStatus(CompanyUtils.AWAITING_PAYMENT);
         calculateRate(orderPad);
         calculateOrdedPad(orderPad);
-        return new ResponseEntity<OrderPad>(orderPadRepository.save(orderPad), HttpStatus.OK);
+        return orderPadRepository.save(orderPad);
     }
 
-    public ResponseEntity<String> paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest){
-        OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(paymentOrderPadRequest.getCustomerId(),"1");
-        if (orderPad == null){
-            return new ResponseEntity<String>("Comanda em aberto, solicite o fechamento", HttpStatus.BAD_REQUEST);
+    private OrderPad getOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
+        final OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(closeOrderPadRequest.getCustomerId(), CompanyUtils.OPEN);
+        if (Objects.isNull(orderPad)) {
+            throw new Exception("OrderPad não encontada ou não esta aberta");
         }
-        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(orderPad.getTableId(),"1");
-        if(orderPad.getValue() != paymentOrderPadRequest.getValuePayment()){
-            return new ResponseEntity<String>("Valor pago menor que o valor da comanda - Valor comanda:R$ " + orderPad.getValue(), HttpStatus.BAD_REQUEST);
+        return orderPad;
+    }
+
+    private String validatePaymentMethod(String paymentMethod) throws Exception {
+        if (paymentMethod.equals(CompanyUtils.CARTAO_DEBITO) || paymentMethod.equals(CompanyUtils.CARTAO_CREDITO) ||
+                paymentMethod.equals(CompanyUtils.DINHEIRO)) {
+            return paymentMethod;
         }
-        orderPad.setStatus("2");
-        tableEstablishment.setStatusTable("0");
-        orderPadRepository.save(orderPad);
-        tableEstablishmentRepository.save(tableEstablishment);
-
-        return new ResponseEntity<String>("comanda encerrada com sucesso!", HttpStatus.CREATED);
+        throw new Exception("Metodo de pagamento invalido");
     }
 
-    public void reservationTable(long tableId){
-        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId,"0");
-        tableEstablishment.setStatusTable("1");
-        tableEstablishmentRepository.save(tableEstablishment);
+    private void calculateRate(OrderPad orderPad) {
+        orderPad.setRate(orderPad.getValue() * CompanyUtils.TAX_RATE);
     }
 
-    public void calculateRate(OrderPad orderPad){
-        orderPad.setRate(orderPad.getValue() * TAX_RATE);
-    }
-
-    public void calculateOrdedPad(OrderPad orderPad){
+    private void calculateOrdedPad(OrderPad orderPad) {
         orderPad.setValue(orderPad.getValue() + orderPad.getRate() + orderPad.getTip());
+    }
+
+    public OrderPad paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(paymentOrderPadRequest.getCustomerId());
+        OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
+        return savePaymentOrderPad(orderPad, paymentOrderPadRequest);
+    }
+
+    private OrderPad findOrderPadAwaitingPayment(long cutomerId) throws Exception {
+        OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(cutomerId, CompanyUtils.AWAITING_PAYMENT);
+        if (Objects.isNull(orderPad)) {
+            throw new Exception("Customer não tem OrderPad Aguardando Pagamento");
+        }
+        return orderPad;
+    }
+
+    private OrderPad savePaymentOrderPad(OrderPad orderPad, PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
+        validateValuePayment(orderPad.getValue(), paymentOrderPadRequest.getValuePayment());
+        orderPad.setStatus(CompanyUtils.PAID);
+        removeResenvationTable(orderPad.getTableId());
+        return orderPadRepository.save(orderPad);
+    }
+
+    private void validateValuePayment(double orderPadValue, double valuePayment) throws Exception {
+        if (orderPadValue != valuePayment) {
+            throw new Exception("Valor pago menor que o valor da comanda - Valor comanda: R$ " + orderPadValue);
+        }
+    }
+
+    private void removeResenvationTable(long tableId) {
+        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
+        tableEstablishment.setStatusTable(CompanyUtils.TABLE_AVALIABLE_STATUS);
+        tableEstablishmentRepository.save(tableEstablishment);
     }
 
 }

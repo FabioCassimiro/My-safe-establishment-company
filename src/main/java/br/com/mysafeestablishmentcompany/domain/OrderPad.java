@@ -11,7 +11,7 @@ public class OrderPad extends AbstractEntity{
     private String customerName;
     private long tableId;
     private int quantityCustomer;
-    private String payment;
+    private String paymentMethod;
     private String status;
     private double tip;
     private double rate;
@@ -49,12 +49,12 @@ public class OrderPad extends AbstractEntity{
         this.quantityCustomer = quantityCustomer;
     }
 
-    public String getPayment() {
-        return payment;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setPayment(String payment) {
-        this.payment = payment;
+    public void setPaymentMethod(String payment) {
+        this.paymentMethod = paymentMethod;
     }
 
     public String getStatus() {
@@ -99,7 +99,7 @@ public class OrderPad extends AbstractEntity{
                 ", customerName='" + customerName + '\'' +
                 ", tableId=" + tableId +
                 ", quantityCustomer=" + quantityCustomer +
-                ", payment='" + payment + '\'' +
+                ", paymentMethod='" + paymentMethod + '\'' +
                 ", status='" + status + '\'' +
                 ", tip=" + tip +
                 ", rate=" + rate +
