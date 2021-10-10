@@ -90,7 +90,7 @@ public class OrderPadService {
     }
 
     private OrderPad saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
-        orderPad.setPayment(validatePaymentOption(closeOrderPadRequest.getPayment()));
+        orderPad.setPaymentMethod(validatePaymentMethod(closeOrderPadRequest.getPaymentMethod()));
         orderPad.setTip(closeOrderPadRequest.getTip());
         orderPad.setStatus(CompanyUtils.AWAITING_PAYMENT);
         calculateRate(orderPad);
@@ -106,12 +106,12 @@ public class OrderPadService {
         return orderPad;
     }
 
-    private String validatePaymentOption(String paymentOption) throws Exception {
-        if (paymentOption.equals(CompanyUtils.CARTAO_DEBITO) || paymentOption.equals(CompanyUtils.CARTAO_CREDITO) ||
-                paymentOption.equals(CompanyUtils.DINHEIRO)) {
-            return paymentOption;
+    private String validatePaymentMethod(String paymentMethod) throws Exception {
+        if (paymentMethod.equals(CompanyUtils.CARTAO_DEBITO) || paymentMethod.equals(CompanyUtils.CARTAO_CREDITO) ||
+                paymentMethod.equals(CompanyUtils.DINHEIRO)) {
+            return paymentMethod;
         }
-        throw new Exception("Opção de pagamento invalida");
+        throw new Exception("Metodo de pagamento invalido");
     }
 
     private void calculateRate(OrderPad orderPad) {

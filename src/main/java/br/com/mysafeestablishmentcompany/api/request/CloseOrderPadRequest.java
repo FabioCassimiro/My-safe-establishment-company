@@ -3,7 +3,7 @@ package br.com.mysafeestablishmentcompany.api.request;
 public class CloseOrderPadRequest {
 
     private long customerId;
-    private String payment;
+    private String paymentMethod;
     private double tip;
 
     public long getCustomerId() {
@@ -14,12 +14,12 @@ public class CloseOrderPadRequest {
         this.customerId = customerId;
     }
 
-    public String getPayment() {
-        return payment;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setPayment(String payment) {
-        this.payment = payment;
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public double getTip() {
