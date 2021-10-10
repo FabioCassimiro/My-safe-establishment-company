@@ -22,12 +22,12 @@ public class OrderController {
         return orderService.register(ordersRequest);
     }
 
-    @GetMapping("/list/{customerId}")
+    @GetMapping("/{customerId}")
     public ArrayList<Order> allOrders(@PathVariable long customerId) throws Exception {
         return orderService.allOrders(customerId);
     }
 
-    @GetMapping("/list/{customerId}/{orderId}")
+    @GetMapping("/{customerId}/{orderId}")
     public Order orderById(@PathVariable long customerId, @PathVariable long orderId) throws Exception {
         return orderService.orderById(customerId, orderId);
     }
