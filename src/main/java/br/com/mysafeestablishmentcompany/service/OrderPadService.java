@@ -4,9 +4,6 @@ package br.com.mysafeestablishmentcompany.service;
 import br.com.mysafeestablishmentcompany.api.request.CloseOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.CreateOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
-import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
-import br.com.mysafeestablishmentcompany.api.response.CreateOrderPadResponse;
-import br.com.mysafeestablishmentcompany.api.response.PaymentOrderPadResponse;
 import br.com.mysafeestablishmentcompany.domain.CompanyUtils;
 import br.com.mysafeestablishmentcompany.domain.Customer;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
@@ -37,13 +34,9 @@ public class OrderPadService {
         this.customerRepository = customerRepository;
     }
 
-    public CreateOrderPadResponse createOrderPad(CreateOrderPadRequest createOrderPadRequest) {
-        try {
-            Customer customer = findCustomer(createOrderPadRequest.getCustomerId());
-            return saveOrderPad(createOrderPadRequest, customer);
-        } catch (Exception e) {
-            return new CreateOrderPadResponse(e.getMessage());
-        }
+    public OrderPad createOrderPad(CreateOrderPadRequest createOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(createOrderPadRequest.getCustomerId());
+        return saveOrderPad(createOrderPadRequest, customer);
     }
 
     private Customer findCustomer(long customerId) throws CustomerNotFoundException {
@@ -54,7 +47,7 @@ public class OrderPadService {
         return customer;
     }
 
-    private CreateOrderPadResponse saveOrderPad(CreateOrderPadRequest createOrderPadRequest, Customer customer) throws Exception {
+    private OrderPad saveOrderPad(CreateOrderPadRequest createOrderPadRequest, Customer customer) throws Exception {
         OrderPad orderPad = new OrderPad();
         OrderPad orderPadDTO = orderPadRepository.findByCustomerIdAndStatus(customer.getId(), CompanyUtils.OPEN);
         if (!Objects.isNull(orderPadDTO)) {
@@ -67,7 +60,7 @@ public class OrderPadService {
         orderPad.setQuantityCustomer(createOrderPadRequest.getQuantityCustomer());
         reservationTable(createOrderPadRequest.getTableId());
         orderPad.setTableId(createOrderPadRequest.getTableId());
-        return new CreateOrderPadResponse(orderPadRepository.save(orderPad));
+        return orderPadRepository.save(orderPad);
     }
 
     private void validateQuantityCustomers(CreateOrderPadRequest createOrderPadRequest) throws Exception {
@@ -76,7 +69,7 @@ public class OrderPadService {
         }
     }
 
-    public void reservationTable(long tableId) throws Exception {
+    private void reservationTable(long tableId) throws Exception {
         TableEstablishment tableEstablishment = getTableEstablishment(tableId);
         tableEstablishment.setStatusTable(CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
         tableEstablishmentRepository.save(tableEstablishment);
@@ -90,25 +83,19 @@ public class OrderPadService {
         return tableEstablishment;
     }
 
-    public CloseOrderPadResponse closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) {
-
-        try {
-            Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
-            final OrderPad orderPad = getOrderPad(closeOrderPadRequest);
-            return saveClosureOrderPad(closeOrderPadRequest, orderPad);
-        } catch (Exception e) {
-            return new CloseOrderPadResponse(e.getMessage());
-        }
-
+    public OrderPad closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
+        final OrderPad orderPad = getOrderPad(closeOrderPadRequest);
+        return saveClosureOrderPad(closeOrderPadRequest, orderPad);
     }
 
-    private CloseOrderPadResponse saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
+    private OrderPad saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
         orderPad.setPayment(validatePaymentOption(closeOrderPadRequest.getPayment()));
         orderPad.setTip(closeOrderPadRequest.getTip());
         orderPad.setStatus(CompanyUtils.AWAITING_PAYMENT);
         calculateRate(orderPad);
         calculateOrdedPad(orderPad);
-        return new CloseOrderPadResponse(orderPadRepository.save(orderPad));
+        return orderPadRepository.save(orderPad);
     }
 
     private OrderPad getOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
@@ -127,22 +114,18 @@ public class OrderPadService {
         throw new Exception("Opção de pagamento invalida");
     }
 
-    public void calculateRate(OrderPad orderPad) {
+    private void calculateRate(OrderPad orderPad) {
         orderPad.setRate(orderPad.getValue() * CompanyUtils.TAX_RATE);
     }
 
-    public void calculateOrdedPad(OrderPad orderPad) {
+    private void calculateOrdedPad(OrderPad orderPad) {
         orderPad.setValue(orderPad.getValue() + orderPad.getRate() + orderPad.getTip());
     }
 
-    public PaymentOrderPadResponse paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) {
-        try {
-            Customer customer = findCustomer(paymentOrderPadRequest.getCustomerId());
-            OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
-            return savePaymentOrderPad(orderPad, paymentOrderPadRequest);
-        } catch (Exception e) {
-            return new PaymentOrderPadResponse(e.getMessage());
-        }
+    public OrderPad paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
+        Customer customer = findCustomer(paymentOrderPadRequest.getCustomerId());
+        OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
+        return savePaymentOrderPad(orderPad, paymentOrderPadRequest);
     }
 
     private OrderPad findOrderPadAwaitingPayment(long cutomerId) throws Exception {
@@ -153,11 +136,11 @@ public class OrderPadService {
         return orderPad;
     }
 
-    private PaymentOrderPadResponse savePaymentOrderPad(OrderPad orderPad, PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
+    private OrderPad savePaymentOrderPad(OrderPad orderPad, PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
         validateValuePayment(orderPad.getValue(), paymentOrderPadRequest.getValuePayment());
         orderPad.setStatus(CompanyUtils.PAID);
         removeResenvationTable(orderPad.getTableId());
-        return new PaymentOrderPadResponse(orderPadRepository.save(orderPad));
+        return orderPadRepository.save(orderPad);
     }
 
     private void validateValuePayment(double orderPadValue, double valuePayment) throws Exception {
@@ -166,7 +149,7 @@ public class OrderPadService {
         }
     }
 
-    public void removeResenvationTable(long tableId) {
+    private void removeResenvationTable(long tableId) {
         TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
         tableEstablishment.setStatusTable(CompanyUtils.TABLE_AVALIABLE_STATUS);
         tableEstablishmentRepository.save(tableEstablishment);

@@ -6,13 +6,14 @@ import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
 import br.com.mysafeestablishmentcompany.api.response.CreateOrderPadResponse;
 import br.com.mysafeestablishmentcompany.api.response.PaymentOrderPadResponse;
+import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.service.OrderPadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/private/customer/orderPad")
+@RequestMapping("/private/orderpad")
 @CrossOrigin
 public class OrderPadController {
 
@@ -25,17 +26,17 @@ public class OrderPadController {
     }
 
     @PostMapping("/create")
-    public CreateOrderPadResponse createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) {
+    public OrderPad createOrderPad(@RequestBody CreateOrderPadRequest createOrderPadRequest) throws Exception {
         return orderPadService.createOrderPad(createOrderPadRequest);
     }
 
     @PostMapping("/close")
-    public CloseOrderPadResponse closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) {
+    public OrderPad closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) throws Exception {
         return orderPadService.closeOrderPad(closeOrderPadRequest);
     }
 
     @PostMapping("/payment")
-    public PaymentOrderPadResponse paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest){
+    public OrderPad paymentOrderPad(@RequestBody PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
         return orderPadService.paymentOrderPad(paymentOrderPadRequest);
     }
 
