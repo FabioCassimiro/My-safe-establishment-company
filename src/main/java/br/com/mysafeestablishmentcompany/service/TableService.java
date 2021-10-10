@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
 public class TableService {
@@ -19,23 +20,26 @@ public class TableService {
         this.tableEstablishmentRepository = tableEstablishmentRepository;
     }
 
-    public ResponseEntity<String> register(TableEstablishment tableEstablishment) {
-        tableEstablishmentRepository.save(tableEstablishment);
-        return new ResponseEntity<>("A mesa : " + tableEstablishment.getId() + " foi criada com sucesso!", HttpStatus.CREATED);
+    public TableEstablishment register(TableEstablishment tableEstablishment) {
+        return tableEstablishmentRepository.save(tableEstablishment);
     }
 
-    public ResponseEntity<String> delete(Long id) {
-        TableEstablishment tableEstablishment = tableEstablishmentRepository.findTableEstablishmentById(id);
-        if (tableEstablishment != null) {
-            tableEstablishmentRepository.delete(tableEstablishment);
-            return new ResponseEntity<>("A mesa: " + tableEstablishment.getId() + " foi deletado com sucesso!", HttpStatus.ACCEPTED);
+    public String delete(Long id) {
+        TableEstablishment tableDTO = tableEstablishmentRepository.findTableEstablishmentById(id);
+        if (tableDTO != null) {
+            tableEstablishmentRepository.delete(tableDTO);
+            return "A mesa: " + tableDTO.getId() + " foi deletado com sucesso!";
         }
-        return new ResponseEntity<>("A mesa: " + id + " não foi encontrado!", HttpStatus.NOT_FOUND);
+        return "A mesa: " + id + " não foi encontrado!";
     }
 
-    public ResponseEntity<String> update(TableEstablishment tableEstablishment) {
+    public String update(TableEstablishment tableEstablishment) {
+        TableEstablishment tableDTO = tableEstablishmentRepository.findTableEstablishmentById(tableEstablishment.getId());
+        if (Objects.isNull(tableDTO)){
+            return "A mesa: " + tableEstablishment.getId() + " não foi encontrado!";
+        }
         tableEstablishmentRepository.save(tableEstablishment);
-        return new ResponseEntity<>("A mesa: " + tableEstablishment.getId() + " foi alterado com sucesso!", HttpStatus.ACCEPTED);
+        return "A mesa: " + tableEstablishment.getId() + " foi alterado com sucesso!";
     }
 
     public ArrayList<TableEstablishment> allTableEstablishments() {
