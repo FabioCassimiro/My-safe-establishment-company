@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 @RestController()
 @RequestMapping("/private/owner")
+@CrossOrigin
 public class ProductController {
 
     ProductService productService;

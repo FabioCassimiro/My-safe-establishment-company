@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("private/order")
+@CrossOrigin
 public class OrderController {
 
     private final OrderService orderService;

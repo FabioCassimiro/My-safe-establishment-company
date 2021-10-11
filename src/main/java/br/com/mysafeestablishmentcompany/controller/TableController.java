@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/private/owner")
+@CrossOrigin
 public class TableController {
 
     final TableService tableService;
