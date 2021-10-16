@@ -15,7 +15,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handlerIntegracaoException(IntegracaoException e) {
         ApiException apiException = new ApiException(
                 e.getMessage(),
-                e,
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now(ZoneId.of("Z"))
         );
