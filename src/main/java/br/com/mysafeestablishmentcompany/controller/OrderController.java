@@ -19,7 +19,7 @@ public class OrderController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody OrdersRequest ordersRequest){
+    public String register(@RequestBody OrdersRequest ordersRequest) throws Exception {
         return orderService.register(ordersRequest);
     }
 
