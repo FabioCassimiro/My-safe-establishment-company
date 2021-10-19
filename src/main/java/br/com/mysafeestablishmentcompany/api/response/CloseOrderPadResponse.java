@@ -1,18 +1,16 @@
 package br.com.mysafeestablishmentcompany.api.response;
 
+import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 
-public class CloseOrderPadResponse extends ErrorResponse{
+import java.util.ArrayList;
+
+public class CloseOrderPadResponse {
 
     private OrderPad orderPad;
+    private ArrayList<Order> orders;
 
-    public CloseOrderPadResponse(OrderPad orderPad) {
-        this.orderPad = orderPad;
-    }
-
-    public CloseOrderPadResponse(String errorMessage) {
-        super(errorMessage);
-        this.orderPad = null;
+    public CloseOrderPadResponse() {
     }
 
     public OrderPad getOrderPad() {
@@ -23,10 +21,16 @@ public class CloseOrderPadResponse extends ErrorResponse{
         this.orderPad = orderPad;
     }
 
-    @Override
-    public String toString() {
-        return "CloseOrderPadResponse{" +
-                "orderPad=" + orderPad +
-                '}';
+    public ArrayList<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(ArrayList<Order> orders) {
+        this.orders = orders;
+    }
+
+    public CloseOrderPadResponse(OrderPad orderPad, ArrayList<Order> orders) {
+        this.orderPad = orderPad;
+        this.orders = orders;
     }
 }

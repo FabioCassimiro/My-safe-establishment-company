@@ -31,7 +31,7 @@ public class OrderPadController {
     }
 
     @PostMapping("/close")
-    public OrderPad closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) throws Exception {
+    public CloseOrderPadResponse closeOrderPad(@RequestBody CloseOrderPadRequest closeOrderPadRequest) throws Exception {
         return orderPadService.closeOrderPad(closeOrderPadRequest);
     }
 
