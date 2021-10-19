@@ -4,10 +4,8 @@ package br.com.mysafeestablishmentcompany.service;
 import br.com.mysafeestablishmentcompany.api.request.CloseOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.CreateOrderPadRequest;
 import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
-import br.com.mysafeestablishmentcompany.domain.CompanyUtils;
-import br.com.mysafeestablishmentcompany.domain.Customer;
-import br.com.mysafeestablishmentcompany.domain.OrderPad;
-import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
+import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
+import br.com.mysafeestablishmentcompany.domain.*;
 import br.com.mysafeestablishmentcompany.exception.CustomerNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.CustomerRepository;
 import br.com.mysafeestablishmentcompany.repository.OrderPadRepository;
@@ -17,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -26,12 +25,17 @@ public class OrderPadService {
     private final OrderPadRepository orderPadRepository;
     private final TableEstablishmentRepository tableEstablishmentRepository;
     private final CustomerRepository customerRepository;
+    private final OrderService orderService;
 
     @Autowired
-    public OrderPadService(OrderPadRepository orderPadRepository, TableEstablishmentRepository tableEstablishmentRepository, CustomerRepository customerRepository) {
+    public OrderPadService(OrderPadRepository orderPadRepository,
+                           TableEstablishmentRepository tableEstablishmentRepository,
+                           CustomerRepository customerRepository,
+                           OrderService orderService) {
         this.orderPadRepository = orderPadRepository;
         this.tableEstablishmentRepository = tableEstablishmentRepository;
         this.customerRepository = customerRepository;
+        this.orderService = orderService;
     }
 
     public OrderPad createOrderPad(CreateOrderPadRequest createOrderPadRequest) throws Exception {
@@ -83,10 +87,12 @@ public class OrderPadService {
         return tableEstablishment;
     }
 
-    public OrderPad closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
+    public CloseOrderPadResponse closeOrderPad(CloseOrderPadRequest closeOrderPadRequest) throws Exception {
         Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
-        final OrderPad orderPad = getOrderPad(closeOrderPadRequest);
-        return saveClosureOrderPad(closeOrderPadRequest, orderPad);
+        OrderPad orderPad = getOrderPad(closeOrderPadRequest);
+        orderPad = saveClosureOrderPad(closeOrderPadRequest, orderPad);
+        ArrayList<Order> orders = orderService.allOrders(orderPad.getCustomerId());
+        return new CloseOrderPadResponse(orderPad,orders);
     }
 
     private OrderPad saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
