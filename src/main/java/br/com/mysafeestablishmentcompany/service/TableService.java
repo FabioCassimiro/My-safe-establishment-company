@@ -34,10 +34,10 @@ public class TableService {
         }
         tableEstablishmentRepository.delete(tableDTO);
         tableDTO = tableEstablishmentRepository.findTableEstablishmentById(id);
-        if (Objects.nonNull(tableDTO.getId())) {
+        if (Objects.nonNull(tableDTO)) {
             throw new Exception(String.format("Mesa: %s não foi deletada", id));
         }
-        return "Mesa: " + tableDTO.getId() + " foi deletada com sucesso!";
+        return "Mesa: " + id + " foi deletada com sucesso!";
     }
 
     public String update(TableEstablishment tableEstablishment) throws Exception {
@@ -57,9 +57,9 @@ public class TableService {
         return tablesDTO;
     }
 
-    public TableEstablishment table(Long id) throws Exception {
+    public TableEstablishment tableById(Long id) throws Exception {
         TableEstablishment tableDTO = tableEstablishmentRepository.findTableEstablishmentById(id);
-        if (Objects.isNull(tableDTO.getId())) {
+        if (Objects.isNull(tableDTO)) {
             throw new TableEstablishmentNotFoundException(String.format("Mesa %s não encontrada", id));
         }
         return tableDTO;

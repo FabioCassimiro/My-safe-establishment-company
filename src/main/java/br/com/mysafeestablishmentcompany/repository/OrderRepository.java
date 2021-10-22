@@ -8,5 +8,5 @@ import java.util.ArrayList;
 public interface OrderRepository extends CrudRepository<Order,Long> {
     ArrayList<Order> findByOrderPadId(long orderPadId);
 
-    Order findOrderById(long id);
+    Order findOrderByIdAndOrderPadId(long id, long orderpaId);
 }
