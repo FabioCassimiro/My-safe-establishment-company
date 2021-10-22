@@ -26,7 +26,7 @@ public class TableController {
 
     @GetMapping("/table/{id}")
     public TableEstablishment tableById(@PathVariable Long id) throws Exception {
-        return tableService.table(id);
+        return tableService.tableById(id);
     }
 
     @PostMapping("/table/register")

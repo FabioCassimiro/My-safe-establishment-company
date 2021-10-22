@@ -9,7 +9,9 @@ import br.com.mysafeestablishmentcompany.domain.*;
 import br.com.mysafeestablishmentcompany.exception.CustomerNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.CustomerRepository;
 import br.com.mysafeestablishmentcompany.repository.OrderPadRepository;
+import br.com.mysafeestablishmentcompany.repository.OrderRepository;
 import br.com.mysafeestablishmentcompany.repository.TableEstablishmentRepository;
+import org.apache.commons.math3.util.Precision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +27,17 @@ public class OrderPadService {
     private final OrderPadRepository orderPadRepository;
     private final TableEstablishmentRepository tableEstablishmentRepository;
     private final CustomerRepository customerRepository;
-    private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public OrderPadService(OrderPadRepository orderPadRepository,
                            TableEstablishmentRepository tableEstablishmentRepository,
                            CustomerRepository customerRepository,
-                           OrderService orderService) {
+                           OrderRepository orderRepository) {
         this.orderPadRepository = orderPadRepository;
         this.tableEstablishmentRepository = tableEstablishmentRepository;
         this.customerRepository = customerRepository;
-        this.orderService = orderService;
+        this.orderRepository = orderRepository;
     }
 
     public OrderPad createOrderPad(CreateOrderPadRequest createOrderPadRequest) throws Exception {
@@ -53,9 +55,11 @@ public class OrderPadService {
 
     private OrderPad saveOrderPad(CreateOrderPadRequest createOrderPadRequest, Customer customer) throws Exception {
         OrderPad orderPad = new OrderPad();
-        OrderPad orderPadDTO = orderPadRepository.findByCustomerIdAndStatus(customer.getId(), CompanyUtils.OPEN);
-        if (!Objects.isNull(orderPadDTO)) {
-            throw new Exception("Customer já tem OrderPad em aberto");
+        ArrayList<OrderPad> orderPadsDTO = orderPadRepository.findByCustomerId(customer.getId());
+        if (!orderPadsDTO.isEmpty()) {
+            if (orderPadsDTO.stream().anyMatch(orderPads -> !Objects.equals(orderPads.getStatus(), CompanyUtils.PAID))) {
+                throw new Exception("Customer já tem OrderPad em aberto");
+            }
         }
         orderPad.setCustomerId(customer.getId());
         orderPad.setCustomerName(customer.getName());
@@ -80,7 +84,7 @@ public class OrderPadService {
     }
 
     private TableEstablishment getTableEstablishment(long tableId) throws Exception {
-        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_AVALIABLE_STATUS);
+        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndStatusTable(tableId, CompanyUtils.TABLE_AVALIABLE_STATUS);
         if (Objects.isNull(tableEstablishment)) {
             throw new Exception("Table: " + tableId + "Não disponivel");
         }
@@ -91,8 +95,8 @@ public class OrderPadService {
         Customer customer = findCustomer(closeOrderPadRequest.getCustomerId());
         OrderPad orderPad = getOrderPad(closeOrderPadRequest);
         orderPad = saveClosureOrderPad(closeOrderPadRequest, orderPad);
-        ArrayList<Order> orders = orderService.allOrders(orderPad.getCustomerId());
-        return new CloseOrderPadResponse(orderPad,orders);
+        ArrayList<Order> orders = orderRepository.findByOrderPadId(orderPad.getId());
+        return new CloseOrderPadResponse(orderPad, orders);
     }
 
     private OrderPad saveClosureOrderPad(CloseOrderPadRequest closeOrderPadRequest, OrderPad orderPad) throws Exception {
@@ -121,11 +125,11 @@ public class OrderPadService {
     }
 
     private void calculateRate(OrderPad orderPad) {
-        orderPad.setRate(orderPad.getValue() * CompanyUtils.TAX_RATE);
+        orderPad.setRate(Precision.round(orderPad.getValue() * CompanyUtils.TAX_RATE, 2));
     }
 
     private void calculateOrdedPad(OrderPad orderPad) {
-        orderPad.setValue(orderPad.getValue() + orderPad.getRate() + orderPad.getTip());
+        orderPad.setValue(Precision.round(orderPad.getValue() + orderPad.getRate() + orderPad.getTip(), 2));
     }
 
     public OrderPad paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
@@ -156,7 +160,7 @@ public class OrderPadService {
     }
 
     private void removeResenvationTable(long tableId) {
-        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndAndStatusTable(tableId, CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
+        TableEstablishment tableEstablishment = tableEstablishmentRepository.findByIdAndStatusTable(tableId, CompanyUtils.TABLE_NOT_AVAILABLE_STATUS);
         tableEstablishment.setStatusTable(CompanyUtils.TABLE_AVALIABLE_STATUS);
         tableEstablishmentRepository.save(tableEstablishment);
     }
