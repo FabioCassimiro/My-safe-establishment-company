@@ -83,7 +83,7 @@ public class OrderService {
 
     public Order orderById(long customerId, long orderId) throws Exception {
         OrderPad orderPadDTO = searchOrderPad(customerId);
-        Order order = orderRepository.findOrderById(orderId);
+        Order order = orderRepository.findOrderByIdAndOrderPadId(orderId, orderPadDTO.getId());
         if (Objects.isNull(order)) {
             throw new OrderNotFoundException(
                     String.format("Order %s não encontrada para Customer %s", orderId, customerId)

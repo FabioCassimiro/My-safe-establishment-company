@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public interface TableEstablishmentRepository extends CrudRepository<TableEstablishment,Long> {
 
-    TableEstablishment findByIdAndAndStatusTable(long tableId, String status);
+    TableEstablishment findByIdAndStatusTable(long tableId, String status);
 
     ArrayList<TableEstablishment> findAll();
 
