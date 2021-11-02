@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.controller;
 
 import br.com.mysafeestablishmentcompany.api.request.OrdersRequest;
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.service.OrderService;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class OrderController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody OrdersRequest ordersRequest) throws Exception {
+    public MessageResponse register(@RequestBody OrdersRequest ordersRequest) throws Exception {
         return orderService.register(ordersRequest);
     }
 

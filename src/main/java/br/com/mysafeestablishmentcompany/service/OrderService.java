@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.service;
 
 import br.com.mysafeestablishmentcompany.api.request.OrdersRequest;
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.CompanyUtils;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
@@ -32,7 +33,7 @@ public class OrderService {
         this.orderPadRepository = orderPadRepository;
     }
 
-    public String register(OrdersRequest ordersRequest) throws Exception {
+    public MessageResponse register(OrdersRequest ordersRequest) throws Exception {
         OrderPad orderPad = searchOrderPad(ordersRequest.getCustomerId());
         for (Order order : ordersRequest.getOrders()) {
             order.setOrderPadId(orderPad.getId());
@@ -40,7 +41,7 @@ public class OrderService {
             orderRepository.save(order);
         }
         updateOrderPad(orderPad);
-        return "Pedido(s) criado(s)";
+        return new MessageResponse("Pedido(s) criado(s)");
     }
 
     private OrderPad searchOrderPad(long customerId) throws Exception {

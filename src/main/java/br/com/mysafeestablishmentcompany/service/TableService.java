@@ -1,5 +1,6 @@
 package br.com.mysafeestablishmentcompany.service;
 
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import br.com.mysafeestablishmentcompany.exception.TableEstablishmentNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.TableEstablishmentRepository;
@@ -27,7 +28,7 @@ public class TableService {
         return tableEstablishmentRepository.save(tableEstablishment);
     }
 
-    public String delete(Long id) throws Exception {
+    public MessageResponse delete(Long id) throws Exception {
         TableEstablishment tableDTO = tableEstablishmentRepository.findTableEstablishmentById(id);
         if (Objects.isNull(tableDTO.getId())) {
             throw new TableEstablishmentNotFoundException(String.format("Mesa %s não encontrada", id));
@@ -37,16 +38,15 @@ public class TableService {
         if (Objects.nonNull(tableDTO)) {
             throw new Exception(String.format("Mesa: %s não foi deletada", id));
         }
-        return "Mesa: " + id + " foi deletada com sucesso!";
+        return new MessageResponse("Mesa: " + id + " foi deletada com sucesso!");
     }
 
-    public String update(TableEstablishment tableEstablishment) throws Exception {
+    public TableEstablishment update(TableEstablishment tableEstablishment) throws Exception {
         TableEstablishment tableDTO = tableEstablishmentRepository.findTableEstablishmentById(tableEstablishment.getId());
         if (Objects.isNull(tableDTO)) {
             throw new TableEstablishmentNotFoundException(String.format("Mesa %s não encontrada", tableEstablishment.getId()));
         }
-        tableEstablishmentRepository.save(tableEstablishment);
-        return "A mesa: " + tableEstablishment.getId() + " foi alterado com sucesso!";
+        return tableEstablishmentRepository.save(tableEstablishment);
     }
 
     public ArrayList<TableEstablishment> allTableEstablishments() throws Exception {
