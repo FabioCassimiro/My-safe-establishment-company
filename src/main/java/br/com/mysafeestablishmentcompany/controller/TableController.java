@@ -1,5 +1,6 @@
 package br.com.mysafeestablishmentcompany.controller;
 
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import br.com.mysafeestablishmentcompany.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,12 @@ public class TableController {
     }
 
     @DeleteMapping("/table/delete/{id}")
-    public String deleteTable(@PathVariable Long id) throws Exception {
+    public MessageResponse deleteTable(@PathVariable Long id) throws Exception {
         return tableService.delete(id);
     }
 
     @PutMapping("/table/update")
-    public String updateTable(@RequestBody TableEstablishment tableEstablishment) throws Exception {
+    public TableEstablishment updateTable(@RequestBody TableEstablishment tableEstablishment) throws Exception {
         return tableService.update(tableEstablishment);
     }
 

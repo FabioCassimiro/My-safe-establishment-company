@@ -1,5 +1,6 @@
 package br.com.mysafeestablishmentcompany.controller;
 
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.Product;
 import br.com.mysafeestablishmentcompany.exception.ProductNotFoundException;
 import br.com.mysafeestablishmentcompany.service.ProductService;
@@ -36,7 +37,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/product/delete/{id}")
-    public String delectProduct(@PathVariable() Long id) throws Exception {
+    public MessageResponse delectProduct(@PathVariable() Long id) throws Exception {
         return productService.delete(id);
     }
 
