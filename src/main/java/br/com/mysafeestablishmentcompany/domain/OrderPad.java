@@ -53,7 +53,7 @@ public class OrderPad extends AbstractEntity{
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String payment) {
+    public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
