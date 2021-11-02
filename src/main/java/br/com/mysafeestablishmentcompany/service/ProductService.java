@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.service;
 
 
+import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
 import br.com.mysafeestablishmentcompany.domain.Product;
 import br.com.mysafeestablishmentcompany.exception.ProductNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.ProductRepository;
@@ -28,7 +29,7 @@ public class ProductService {
         return product;
     }
 
-    public String delete(long productId) throws Exception {
+    public MessageResponse delete(long productId) throws Exception {
         Product productDTO = productRepository.findProductById(productId);
         if (Objects.isNull(productDTO)) {
             throw new ProductNotFoundException(String.format("Produto %s não encontrado ", productId));
@@ -38,7 +39,7 @@ public class ProductService {
         if (Objects.nonNull(productDTO)) {
             throw new Exception(String.format("O produto %s não foi deletado", productDTO.getName()));
         }
-        return "O produto: " + productId + " foi deletado com sucesso!";
+        return new MessageResponse("O produto: " + productId + " foi deletado com sucesso!");
     }
 
     public Product update(Product product) throws Exception {
@@ -46,8 +47,7 @@ public class ProductService {
         if (Objects.isNull(productDTO)) {
             throw new ProductNotFoundException(String.format("Produto %s - %s não foi encontrado ", product.getId(), product.getName()));
         }
-        productRepository.save(product);
-        return product;
+        return productRepository.save(product);
     }
 
     public ArrayList<Product> allProducts() throws Exception {
