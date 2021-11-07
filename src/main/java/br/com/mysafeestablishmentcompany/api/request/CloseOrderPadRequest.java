@@ -3,7 +3,6 @@ package br.com.mysafeestablishmentcompany.api.request;
 public class CloseOrderPadRequest {
 
     private long customerId;
-    private String paymentMethod;
     private double tip;
 
     public long getCustomerId() {
@@ -12,14 +11,6 @@ public class CloseOrderPadRequest {
 
     public void setCustomerId(long customerId) {
         this.customerId = customerId;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public double getTip() {

@@ -68,6 +68,7 @@ public class OrderService {
             valueOrders += order.getValue();
         }
         orderPad.setValue(valueOrders);
+        orderPad.setPaybleValue(valueOrders);
         orderPadRepository.save(orderPad);
     }
 
