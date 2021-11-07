@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/private/owner")
+@RequestMapping("/private")
 @CrossOrigin
 public class TableController {
 
