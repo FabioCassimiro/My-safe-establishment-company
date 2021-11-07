@@ -12,6 +12,7 @@ public class Order extends AbstractEntity{
     private String productName;
     private int quantity;
     private double value;
+    private String note;
 
     public long getOrderPadId() {
         return orderPadId;
@@ -53,6 +54,14 @@ public class Order extends AbstractEntity{
         this.value = value;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public Order(long productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
@@ -69,6 +78,7 @@ public class Order extends AbstractEntity{
                 ", productName='" + productName + '\'' +
                 ", quantity=" + quantity +
                 ", value=" + value +
+                ", note='" + note + '\'' +
                 '}';
     }
 }

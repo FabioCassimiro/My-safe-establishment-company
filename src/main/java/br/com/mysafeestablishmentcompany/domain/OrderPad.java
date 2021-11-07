@@ -5,17 +5,17 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "orderpads")
-public class OrderPad extends AbstractEntity{
+public class OrderPad extends AbstractEntity {
 
     private long customerId;
     private String customerName;
     private long tableId;
     private int quantityCustomer;
-    private String paymentMethod;
     private String status;
     private double tip;
     private double rate;
     private double value;
+    private double paybleValue;
 
     public long getCustomerId() {
         return customerId;
@@ -47,14 +47,6 @@ public class OrderPad extends AbstractEntity{
 
     public void setQuantityCustomer(int quantityCustomer) {
         this.quantityCustomer = quantityCustomer;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public String getStatus() {
@@ -89,6 +81,14 @@ public class OrderPad extends AbstractEntity{
         this.value = value;
     }
 
+    public double getPaybleValue() {
+        return paybleValue;
+    }
+
+    public void setPaybleValue(double paybleValue) {
+        this.paybleValue = paybleValue;
+    }
+
     public OrderPad() {
     }
 
@@ -99,11 +99,11 @@ public class OrderPad extends AbstractEntity{
                 ", customerName='" + customerName + '\'' +
                 ", tableId=" + tableId +
                 ", quantityCustomer=" + quantityCustomer +
-                ", paymentMethod='" + paymentMethod + '\'' +
                 ", status='" + status + '\'' +
                 ", tip=" + tip +
                 ", rate=" + rate +
                 ", value=" + value +
+                ", paybleValue=" + paybleValue +
                 '}';
     }
 }
