@@ -1,12 +1,13 @@
 package br.com.mysafeestablishmentcompany.api.imgur;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 public class UploadImageResponse {
 
     String status;
     String success;
-    List<DataImage> data;
+    DataImage data;
 
     public String getStatus() {
         return status;
@@ -24,14 +25,23 @@ public class UploadImageResponse {
         this.success = success;
     }
 
-    public List<DataImage> getData() {
+    public DataImage getData() {
         return data;
     }
 
-    public void setData(List<DataImage> data) {
+    public void setData(DataImage data) {
         this.data = data;
     }
 
     public UploadImageResponse() {
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", UploadImageResponse.class.getSimpleName() + "[", "]")
+                .add("status='" + status + "'")
+                .add("success='" + success + "'")
+                .add("data=" + data)
+                .toString();
     }
 }

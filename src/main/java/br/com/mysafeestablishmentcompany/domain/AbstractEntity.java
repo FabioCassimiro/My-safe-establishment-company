@@ -1,9 +1,6 @@
 package br.com.mysafeestablishmentcompany.domain;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -11,6 +8,11 @@ import java.util.Objects;
 public class AbstractEntity implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(
+            nullable = false,
+            unique = true,
+            updatable = false
+    )
     private Long id;
 
     public Long getId() {

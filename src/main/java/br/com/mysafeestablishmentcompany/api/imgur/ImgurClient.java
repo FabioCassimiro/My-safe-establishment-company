@@ -1,28 +1,57 @@
 package br.com.mysafeestablishmentcompany.api.imgur;
 
 import feign.Feign;
-import feign.form.spring.SpringFormEncoder;
+import feign.Logger;
+import feign.Request;
+import feign.Retryer;
+import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
-import feign.slf4j.Slf4jLogger;
-import org.springframework.web.multipart.MultipartFile;
+import feign.jackson.JacksonEncoder;
 
-public class ImgurClient implements ImgurAPI{
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+public class ImgurClient implements ImgurAPI {
+
+    private static class CustomerLogger extends Logger {
+        @Override
+        protected void log(String s, String s1, Object... objects) {
+            System.out.printf(s.concat(" - ") + s1 + "%n", objects);
+        }
+    }
 
     public Feign.Builder getBuilder() {
         return Feign.builder()
-                .requestInterceptor(new ImgurRequestInterceptor())
-                .encoder(new SpringFormEncoder())
+                .encoder(new FormEncoder(new JacksonEncoder()))
                 .decoder(new JacksonDecoder())
-                .logger(new Slf4jLogger(ImgurAPI.class));
-
+                .retryer(Retryer.NEVER_RETRY)
+                .options(new Request.Options(60, TimeUnit.SECONDS,
+                        60, TimeUnit.SECONDS,
+                        true))
+                .logLevel(Logger.Level.FULL)
+                .logger(new CustomerLogger());
     }
 
-    private ImgurAPI getApi() {
-        return this.getBuilder().target(ImgurAPI.class, "https://api.imgur.com/3");
+    private ImgurAPI getBearerApi() {
+        return this.getBuilder()
+                .requestInterceptor(new ImgurClientIdRequestInterceptor())
+                .target(ImgurAPI.class, "https://api.imgur.com/3");
+    }
+
+    private ImgurAPI getClientIdApi() {
+        return this.getBuilder()
+                .requestInterceptor(new ImgurClientIdRequestInterceptor())
+                .target(ImgurAPI.class, "https://api.imgur.com/3");
     }
 
     @Override
-    public UploadImageResponse uploadImage(MultipartFile file) {
-        return getApi().uploadImage(file);
+    public UploadImageResponse uploadImage(File image) {
+        return getBearerApi().uploadImage(image);
     }
+
+    @Override
+    public void deleteImage(String deleteHash) {
+        getClientIdApi().deleteImage(deleteHash);
+    }
+
 }

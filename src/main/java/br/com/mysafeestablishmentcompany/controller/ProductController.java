@@ -1,6 +1,9 @@
 package br.com.mysafeestablishmentcompany.controller;
 
+import br.com.mysafeestablishmentcompany.api.imgur.ImgurClient;
+import br.com.mysafeestablishmentcompany.api.request.CreateProductRequest;
 import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
+import br.com.mysafeestablishmentcompany.api.response.ProductResponse;
 import br.com.mysafeestablishmentcompany.domain.Product;
 import br.com.mysafeestablishmentcompany.exception.ProductNotFoundException;
 import br.com.mysafeestablishmentcompany.service.ProductService;
@@ -14,7 +17,8 @@ import java.util.ArrayList;
 @CrossOrigin
 public class ProductController {
 
-    ProductService productService;
+    private ProductService productService;
+    ImgurClient imgurClient = new ImgurClient();
 
     @Autowired
     public ProductController(ProductService productService) {
@@ -31,10 +35,10 @@ public class ProductController {
         return productService.product(id);
     }
 
-    @PostMapping("product/register")
-    public Product registerProduct(@RequestBody Product product) throws Exception {
-        return productService.register(product);
-    }
+//    @PostMapping("product/register")
+//    public Product registerProduct(@RequestBody Product product) throws Exception {
+//        return productService.register(product);
+//    }
 
     @DeleteMapping("/product/delete/{id}")
     public MessageResponse delectProduct(@PathVariable() Long id) throws Exception {
@@ -46,5 +50,9 @@ public class ProductController {
         return productService.update(product);
     }
 
+    @PostMapping(value = "product/register")
+    public Product registerProductWithImage(@RequestBody CreateProductRequest productRequest) throws Exception {
+        return productService.registerProduct(productRequest);
+    }
 
 }
