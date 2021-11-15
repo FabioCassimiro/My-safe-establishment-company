@@ -1,17 +1,39 @@
 package br.com.mysafeestablishmentcompany.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
 public class Product extends AbstractEntity {
 
+    @Column(
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String name;
+    @Column(
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String typeProduct;
+    @Column(
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String description;
+    @Column(
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String ingredients;
+    @Column(
+            nullable = false
+    )
     private double value;
+    @OneToOne(
+            cascade = CascadeType.PERSIST
+    )
+    private ProductDetails productDetails;
 
     public Product() {
 
@@ -55,6 +77,14 @@ public class Product extends AbstractEntity {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public ProductDetails getProductDetails() {
+        return productDetails;
+    }
+
+    public void setProductDetails(ProductDetails productDetails) {
+        this.productDetails = productDetails;
     }
 
     public Product(String name, String typeProduct, String description, String ingredients, double value) {
