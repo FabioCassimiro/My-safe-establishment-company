@@ -47,11 +47,11 @@ public class ProductService {
         if (uploadImageResponse.getSuccess().equals("false")) {
             throw new Exception("Não foi possivel salvar a imagem");
         }
-        ProductDetails productDetails = new ProductDetails(
+        ProductDetails productDetails = productDetailsRepository.save(new ProductDetails(
                 uploadImageResponse.getData().getId(),
                 uploadImageResponse.getData().getDeletehash(),
                 uploadImageResponse.getData().getLink()
-        );
+        ));
         Product product = productRequest.getProduct();
         product.setProductDetails(productDetails);
         Product productDTO = productRepository.save(product);
@@ -63,6 +63,11 @@ public class ProductService {
     }
 
     private File convertBase64ToFile(String imageEncoded) throws IOException {
+        if (imageEncoded.startsWith("data:image/jpeg;base64,")){
+            imageEncoded = imageEncoded.substring(22);
+        } else if (imageEncoded.startsWith("data:image/png;base64,")){
+            imageEncoded = imageEncoded.substring(21);
+        }
         byte[] byteImage = Base64.getDecoder().decode(imageEncoded);
         File outputFile = new File("img.png");
         FileUtils.writeByteArrayToFile(outputFile, byteImage);
@@ -104,6 +109,10 @@ public class ProductService {
             throw new ProductNotFoundException("Produto não encontrado");
         }
         return product;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("data:image/jpeg;base64".substring(22));
     }
 
 }

@@ -20,8 +20,6 @@ public class ProductDetails extends AbstractEntity {
             nullable = false
     )
     private String urlImage;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Product product;
 
     public String getImgurId() {
         return imgurId;
@@ -45,14 +43,6 @@ public class ProductDetails extends AbstractEntity {
 
     public void setUrlImage(String urlImage) {
         this.urlImage = urlImage;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public ProductDetails() {

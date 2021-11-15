@@ -6,5 +6,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ProductDetailsRepository extends CrudRepository<ProductDetails, Long> {
 
-    ProductDetails findProductDetailsByProductId(Long productId);
 }

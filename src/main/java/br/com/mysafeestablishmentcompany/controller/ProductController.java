@@ -35,11 +35,6 @@ public class ProductController {
         return productService.product(id);
     }
 
-//    @PostMapping("product/register")
-//    public Product registerProduct(@RequestBody Product product) throws Exception {
-//        return productService.register(product);
-//    }
-
     @DeleteMapping("/product/delete/{id}")
     public MessageResponse delectProduct(@PathVariable() Long id) throws Exception {
         return productService.delete(id);
