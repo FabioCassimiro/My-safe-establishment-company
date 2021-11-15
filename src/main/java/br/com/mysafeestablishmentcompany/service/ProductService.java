@@ -111,8 +111,4 @@ public class ProductService {
         return product;
     }
 
-    public static void main(String[] args) {
-        System.out.println("data:image/jpeg;base64".substring(22));
-    }
-
 }
