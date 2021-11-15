@@ -63,11 +63,6 @@ public class ProductService {
     }
 
     private File convertBase64ToFile(String imageEncoded) throws IOException {
-        if (imageEncoded.startsWith("data:image/jpeg;base64,")){
-            imageEncoded = imageEncoded.substring(22);
-        } else if (imageEncoded.startsWith("data:image/png;base64,")){
-            imageEncoded = imageEncoded.substring(21);
-        }
         byte[] byteImage = Base64.getDecoder().decode(imageEncoded);
         File outputFile = new File("img.png");
         FileUtils.writeByteArrayToFile(outputFile, byteImage);
