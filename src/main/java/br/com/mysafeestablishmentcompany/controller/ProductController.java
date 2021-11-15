@@ -3,7 +3,6 @@ package br.com.mysafeestablishmentcompany.controller;
 import br.com.mysafeestablishmentcompany.api.imgur.ImgurClient;
 import br.com.mysafeestablishmentcompany.api.request.CreateProductRequest;
 import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
-import br.com.mysafeestablishmentcompany.api.response.ProductResponse;
 import br.com.mysafeestablishmentcompany.domain.Product;
 import br.com.mysafeestablishmentcompany.exception.ProductNotFoundException;
 import br.com.mysafeestablishmentcompany.service.ProductService;
@@ -35,6 +34,11 @@ public class ProductController {
         return productService.product(id);
     }
 
+    @PostMapping(value = "product/register")
+    public Product registerProduct(@RequestBody CreateProductRequest productRequest) throws Exception {
+        return productService.registerProduct(productRequest);
+    }
+
     @DeleteMapping("/product/delete/{id}")
     public MessageResponse delectProduct(@PathVariable() Long id) throws Exception {
         return productService.delete(id);
@@ -43,11 +47,6 @@ public class ProductController {
     @PutMapping("/product/update")
     public Product updateProduct(@RequestBody Product product) throws Exception {
         return productService.update(product);
-    }
-
-    @PostMapping(value = "product/register")
-    public Product registerProductWithImage(@RequestBody CreateProductRequest productRequest) throws Exception {
-        return productService.registerProduct(productRequest);
     }
 
 }

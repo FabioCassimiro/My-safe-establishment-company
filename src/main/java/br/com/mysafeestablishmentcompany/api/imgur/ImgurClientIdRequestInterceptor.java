@@ -5,8 +5,7 @@ import feign.RequestTemplate;
 
 public class ImgurClientIdRequestInterceptor implements RequestInterceptor {
 
-    private String clientID = "460dbaf6923bd2d";
-
+    private static final String CLIENT_ID_KEY = "460dbaf6923bd2d";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String CLIENT_ID = "Client-ID";
 
@@ -15,6 +14,6 @@ public class ImgurClientIdRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        requestTemplate.header(AUTHORIZATION_HEADER, String.format("%s %s", CLIENT_ID, this.clientID));
+        requestTemplate.header(AUTHORIZATION_HEADER, String.format("%s %s", CLIENT_ID, CLIENT_ID_KEY));
     }
 }

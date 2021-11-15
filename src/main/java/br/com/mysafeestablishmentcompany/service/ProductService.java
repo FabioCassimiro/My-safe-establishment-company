@@ -5,14 +5,12 @@ import br.com.mysafeestablishmentcompany.api.imgur.ImgurClient;
 import br.com.mysafeestablishmentcompany.api.imgur.UploadImageResponse;
 import br.com.mysafeestablishmentcompany.api.request.CreateProductRequest;
 import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
-import br.com.mysafeestablishmentcompany.api.response.ProductResponse;
 import br.com.mysafeestablishmentcompany.domain.Product;
 import br.com.mysafeestablishmentcompany.domain.ProductDetails;
 import br.com.mysafeestablishmentcompany.exception.ProductNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.ProductDetailsRepository;
 import br.com.mysafeestablishmentcompany.repository.ProductRepository;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -33,14 +31,6 @@ public class ProductService {
         this.productDetailsRepository = productDetailsRepository;
     }
 
-    public Product register(Product product) throws Exception {
-        Product productDTO = productRepository.save(product);
-        if (Objects.isNull(productDTO.getId())) {
-            throw new Exception(String.format("Não foi possivel criar o produto %s", product.getName()));
-        }
-        return product;
-    }
-
     public Product registerProduct(CreateProductRequest productRequest) throws Exception {
         File outputFile = convertBase64ToFile(productRequest.getImageEncoded());
         UploadImageResponse uploadImageResponse = imgurClient.uploadImage(outputFile);
@@ -52,9 +42,9 @@ public class ProductService {
                 uploadImageResponse.getData().getDeletehash(),
                 uploadImageResponse.getData().getLink()
         ));
-        Product product = productRequest.getProduct();
-        product.setProductDetails(productDetails);
-        Product productDTO = productRepository.save(product);
+        Product productDTO = productRequest.getProduct();
+        productDTO.setProductDetails(productDetails);
+        productDTO = productRepository.save(productDTO);
 
         if (Objects.isNull(productDTO.getId())) {
             throw new Exception(String.format("Não foi possivel criar o produto %s", productRequest.getProduct().getName()));
@@ -74,7 +64,9 @@ public class ProductService {
         if (Objects.isNull(productDTO)) {
             throw new ProductNotFoundException(String.format("Produto %s não encontrado ", productId));
         }
+        imgurClient.deleteImage(productDTO.getProductDetails().getImgurDeleteId());
         productRepository.delete(productDTO);
+        productDetailsRepository.delete(productDTO.getProductDetails());
         productDTO = productRepository.findProductById(productId);
         if (Objects.nonNull(productDTO)) {
             throw new Exception(String.format("O produto %s não foi deletado", productDTO.getName()));

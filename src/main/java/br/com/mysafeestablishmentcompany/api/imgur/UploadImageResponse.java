@@ -5,9 +5,9 @@ import java.util.StringJoiner;
 
 public class UploadImageResponse {
 
-    String status;
-    String success;
-    DataImage data;
+    private String status;
+    private String success;
+    private DataImage data;
 
     public String getStatus() {
         return status;

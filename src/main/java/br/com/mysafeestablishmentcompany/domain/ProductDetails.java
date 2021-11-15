@@ -8,15 +8,18 @@ public class ProductDetails extends AbstractEntity {
 
     @Column(
             nullable = false,
-            unique = true
+            unique = true,
+            updatable = false
     )
     private String imgurId;
     @Column(
             nullable = false,
-            unique = true
+            unique = true,
+            updatable = false
     )
     private String imgurDeleteId;
     @Column(
+            updatable = false,
             nullable = false
     )
     private String urlImage;

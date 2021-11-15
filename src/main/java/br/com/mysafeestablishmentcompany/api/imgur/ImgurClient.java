@@ -7,16 +7,20 @@ import feign.Retryer;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class ImgurClient implements ImgurAPI {
 
+    private static final String IMGUR_URL = "https://api.imgur.com/3";
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ImgurClient.class);
+
     private static class CustomerLogger extends Logger {
         @Override
         protected void log(String s, String s1, Object... objects) {
-            System.out.printf(s.concat(" - ") + s1 + "%n", objects);
+            logger.info(String.format(s.concat(" - ") + s1 + "%n", objects));
         }
     }
 
@@ -35,13 +39,13 @@ public class ImgurClient implements ImgurAPI {
     private ImgurAPI getBearerApi() {
         return this.getBuilder()
                 .requestInterceptor(new ImgurClientIdRequestInterceptor())
-                .target(ImgurAPI.class, "https://api.imgur.com/3");
+                .target(ImgurAPI.class, IMGUR_URL);
     }
 
     private ImgurAPI getClientIdApi() {
         return this.getBuilder()
                 .requestInterceptor(new ImgurClientIdRequestInterceptor())
-                .target(ImgurAPI.class, "https://api.imgur.com/3");
+                .target(ImgurAPI.class, IMGUR_URL);
     }
 
     @Override
