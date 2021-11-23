@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/private")
@@ -43,6 +44,11 @@ public class TableController {
     @PutMapping("/table/update")
     public TableEstablishment updateTable(@RequestBody TableEstablishment tableEstablishment) throws Exception {
         return tableService.update(tableEstablishment);
+    }
+
+    @GetMapping("/table")
+    public List<TableEstablishment> tableByNumberSeats(@RequestParam(name = "numberSeats") Integer numberSeats) throws Exception {
+        return tableService.tableByNumberSeats(numberSeats);
     }
 
 }

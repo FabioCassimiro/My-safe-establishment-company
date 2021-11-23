@@ -4,6 +4,7 @@ import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TableEstablishmentRepository extends CrudRepository<TableEstablishment,Long> {
 
@@ -12,4 +13,6 @@ public interface TableEstablishmentRepository extends CrudRepository<TableEstabl
     ArrayList<TableEstablishment> findAll();
 
     TableEstablishment findTableEstablishmentById(long tableId);
+
+    List<TableEstablishment> findTableEstablishmentByNumberSeatsInAndStatusTable(List<Integer> numberSeats, String tableStatusAvaliable);
 }
