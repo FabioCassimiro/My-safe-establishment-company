@@ -18,7 +18,7 @@ public class TableEstablishment extends AbstractEntity{
     )
     private String locationArea;
     @Column(
-            nullable = false
+            nullable = true
     )
     private Integer numberSeats;
 
