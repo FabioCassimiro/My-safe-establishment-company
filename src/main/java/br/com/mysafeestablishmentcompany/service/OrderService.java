@@ -37,6 +37,7 @@ public class OrderService {
         OrderPad orderPad = searchOrderPad(ordersRequest.getCustomerId());
         for (Order order : ordersRequest.getOrders()) {
             order.setOrderPadId(orderPad.getId());
+            order.setStatus(CompanyUtils.ORDER_STATUS_IN_PROGRESS);
             calculateOrder(order);
             orderRepository.save(order);
         }
@@ -45,7 +46,7 @@ public class OrderService {
     }
 
     private OrderPad searchOrderPad(long customerId) throws Exception {
-        OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(customerId, CompanyUtils.OPEN);
+        OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(customerId, CompanyUtils.ORDERPAD_STATUS_OPEN);
         if (orderPad == null) {
             throw new OrderPadNotFoundException("Não ha comanda aberta para esse usuario");
         }
@@ -92,5 +93,16 @@ public class OrderService {
             );
         }
         return order;
+    }
+
+    public Order changeOrderStatus(Long orderId, String status, Long customerId) throws Exception {
+        Order order = orderById(customerId, orderId);
+        if (CompanyUtils.ordersStatus.stream().anyMatch(s -> s.equals(status))) {
+            if (!CompanyUtils.ORDER_STATUS_DELIVERED.equals(order.getStatus())) {
+                order.setStatus(status);
+                return orderRepository.save(order);
+            }
+        }
+        throw new Exception("Não foi possivel alterar o status");
     }
 }
