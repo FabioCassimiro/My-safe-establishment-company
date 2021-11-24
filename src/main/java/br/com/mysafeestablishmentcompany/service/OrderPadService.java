@@ -171,6 +171,10 @@ public class OrderPadService {
         return orderPadRepository.findAllByStatus(status);
     }
 
+    public List<OrderPad> orderpads(){
+        return (List<OrderPad>) orderPadRepository.findAll();
+    }
+
     public OrderPad orderpadsById(Long orderpadId){
         return orderPadRepository.findOrderPadById(orderpadId);
     }

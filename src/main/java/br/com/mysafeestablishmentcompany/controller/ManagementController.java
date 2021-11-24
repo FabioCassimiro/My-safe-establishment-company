@@ -49,8 +49,8 @@ public class ManagementController {
     }
 
     @GetMapping("orderpads")
-    public List<OrderPad> listOrderpad(@RequestParam(defaultValue = "0") String status) {
-        return orderPadService.orderpadsByStatus(status);
+    public List<OrderPad> listOrderpad() {
+        return orderPadService.orderpads();
     }
 
 
