@@ -33,4 +33,17 @@ public class OrderController {
     public Order orderById(@PathVariable long customerId, @PathVariable long orderId) throws Exception {
         return orderService.orderById(customerId, orderId);
     }
+
+    @PostMapping("/order/update/{orderId}/{orderpadId}/{quantity}")
+    public Order update(@PathVariable long orderId, @PathVariable long orderpadId, @PathVariable int quantity) throws Exception {
+        return orderService.updateOrder(orderId, orderpadId, quantity);
+    }
+
+    @DeleteMapping("/order/delete")
+    public MessageResponse update(@RequestBody Order order) throws Exception {
+        return orderService.deleteOrder(order);
+    }
+
+//    TODO: ALTERAÇÃO DE QUANTIDADE DE PRODUTOS ENQUANTO O STATUS FOR ACCEPTED
+//    TODO: APAGAR PEDIDO ENQUANTO O STATUS FOR ACCEPTED
 }

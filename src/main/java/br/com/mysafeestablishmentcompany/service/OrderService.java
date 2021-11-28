@@ -105,4 +105,25 @@ public class OrderService {
         }
         throw new Exception("Não foi possivel alterar o status");
     }
+
+    public Order updateOrder(long orderId, long orderpadId, int quantity) throws Exception {
+        Order order = orderRepository.findOrderByIdAndOrderPadId(orderId, orderpadId);
+        if (Objects.isNull(order) || quantity < 0 ||
+                order.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
+                order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)) {
+            throw new Exception("Não foi possivel alterar");
+        }
+        order.setQuantity(quantity);
+        return orderRepository.save(order);
+    }
+
+    public MessageResponse deleteOrder(Order order) throws Exception {
+        Order orderDTO = orderRepository.findOrderById(order.getId());
+        if (Objects.isNull(orderDTO) ||
+                order.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
+                order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)){
+            throw new Exception("Não foi possivel deletar");
+        }
+        return new MessageResponse("Orde deletada com sucesso");
+    }
 }
