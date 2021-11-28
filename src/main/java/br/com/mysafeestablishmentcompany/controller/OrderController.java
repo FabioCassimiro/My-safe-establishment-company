@@ -34,12 +34,12 @@ public class OrderController {
         return orderService.orderById(customerId, orderId);
     }
 
-    @PostMapping("/order/update/{orderId}/{orderpadId}/{quantity}")
+    @PostMapping("update/{orderId}/{orderpadId}/{quantity}")
     public Order update(@PathVariable long orderId, @PathVariable long orderpadId, @PathVariable int quantity) throws Exception {
         return orderService.updateOrder(orderId, orderpadId, quantity);
     }
 
-    @DeleteMapping("/order/delete")
+    @DeleteMapping("delete")
     public MessageResponse update(@RequestBody Order order) throws Exception {
         return orderService.deleteOrder(order);
     }

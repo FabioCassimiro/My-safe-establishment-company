@@ -124,6 +124,7 @@ public class OrderService {
                 order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)){
             throw new Exception("Não foi possivel deletar");
         }
-        return new MessageResponse("Orde deletada com sucesso");
+        orderRepository.delete(order);
+        return new MessageResponse("Order deletada com sucesso");
     }
 }
