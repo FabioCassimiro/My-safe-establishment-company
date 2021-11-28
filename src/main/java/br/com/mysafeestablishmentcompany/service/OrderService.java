@@ -114,6 +114,8 @@ public class OrderService {
             throw new Exception("Não foi possivel alterar");
         }
         order.setQuantity(quantity);
+        calculateOrder(order);
+        updateOrderPad(orderPadRepository.findOrderPadById(orderpadId));
         return orderRepository.save(order);
     }
 
