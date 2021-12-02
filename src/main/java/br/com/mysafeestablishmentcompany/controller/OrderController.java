@@ -40,7 +40,7 @@ public class OrderController {
     }
 
     @DeleteMapping("delete")
-    public MessageResponse update(@RequestBody Order order) throws Exception {
+    public MessageResponse delete(@RequestBody Order order) throws Exception {
         return orderService.deleteOrder(order);
     }
 
