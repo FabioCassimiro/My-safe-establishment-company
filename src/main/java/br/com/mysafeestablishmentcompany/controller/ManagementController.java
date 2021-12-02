@@ -1,5 +1,6 @@
 package br.com.mysafeestablishmentcompany.controller;
 
+import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadByManualRequest;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.repository.OrderRepository;
@@ -53,5 +54,9 @@ public class ManagementController {
         return orderPadService.orderpads();
     }
 
+    @PostMapping("/manual/payment/orderpad")
+    public OrderPad paymentOrderPad(@RequestBody PaymentOrderPadByManualRequest paymentOrderPadByManualRequest) throws Exception {
+        return orderPadService.manualPayment(paymentOrderPadByManualRequest);
+    }
 
 }

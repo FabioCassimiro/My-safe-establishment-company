@@ -1,11 +1,8 @@
 package br.com.mysafeestablishmentcompany.service;
 
 
-import br.com.mysafeestablishmentcompany.api.request.CloseOrderPadRequest;
-import br.com.mysafeestablishmentcompany.api.request.CreateOrderPadRequest;
-import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadRequest;
+import br.com.mysafeestablishmentcompany.api.request.*;
 import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
-import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadByCardRequest;
 import br.com.mysafeestablishmentcompany.domain.*;
 import br.com.mysafeestablishmentcompany.exception.CustomerNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.*;
@@ -118,11 +115,36 @@ public class OrderPadService {
         return orderPad;
     }
 
-    public OrderPad paymentOrderPad(PaymentOrderPadRequest paymentOrderPadRequest) throws Exception {
-        Customer customer = findCustomer(paymentOrderPadRequest.getCustomerId());
+    public OrderPad closeManualPaymentOrderPad(Long orderpadId ,Long customerId) throws Exception {
+        Customer customer = findCustomer(customerId);
         OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
-        orderPad.setStatus(CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
-        return orderPadRepository.save(orderPad);
+        if (Objects.equals(orderPad.getId(), orderpadId)){
+            orderPad.setStatus(CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
+            return orderPadRepository.save(orderPad);
+        }
+        throw new Exception("Erro de pagamento manual");
+    }
+
+    public OrderPad manualPayment(PaymentOrderPadByManualRequest paymentManualRequest) throws Exception {
+        Customer customer = findCustomer(paymentManualRequest.getCustomerId());
+        OrderPad orderPad = orderPadRepository.findByCustomerIdAndStatus(paymentManualRequest.getCustomerId(), CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
+        if (Objects.isNull(orderPad)) {
+            throw new Exception("Customer não tem OrderPad Aguardando Pagamento Manual");
+        }
+        if (CompanyUtils.paymentMethods.stream().noneMatch(payment -> payment.equals(paymentManualRequest.getPaymentMethod()))){
+            throw new Exception("Metodo de pagamento Invalido");
+        }
+        orderPad = savePaymentOrderPad(orderPad, paymentManualRequest.getValuePayment());
+        Payment payment = new Payment(
+                orderPad.getId(),
+                paymentManualRequest.getPaymentMethod(),
+                "####",
+                paymentManualRequest.getValuePayment(),
+                "PAGAMENTO MANUAL"
+        );
+        paymentRepository.save(payment);
+        return orderPad;
+
     }
 
     private OrderPad findOrderPadAwaitingPayment(long cutomerId) throws Exception {
