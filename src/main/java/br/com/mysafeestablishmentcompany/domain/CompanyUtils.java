@@ -24,6 +24,9 @@ public class CompanyUtils {
             ORDER_STATUS_DELIVERED
     );
 
+    public static final String CARD_CREDIT_PAYMENT = "CREDITO";
+    public static final String CARD_DEBT_PAYMENT = "DEBITO";
+    public static final String MONEY_PAYMENT = "DINHEIRO";
 
     public static final String TABLE_STATUS_AVALIABLE = "0";
     public static final String TABLE_STATUS_NOT_AVAILABLE = "1";

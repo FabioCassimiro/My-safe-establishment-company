@@ -1,5 +1,7 @@
 package br.com.mysafeestablishmentcompany.domain;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -12,16 +14,20 @@ public class TableEstablishment extends AbstractEntity{
     @Column(
             nullable = false
     )
+    @NonNull
     private String statusTable;
     @Column(
             nullable = false
     )
+    @NonNull
     private String locationArea;
     @Column(
             nullable = true
     )
+    @NonNull
     private Integer numberSeats;
 
+    @NonNull
     public String getStatusTable() {
         return statusTable;
     }
@@ -30,6 +36,7 @@ public class TableEstablishment extends AbstractEntity{
         this.statusTable = statusTable;
     }
 
+    @NonNull
     public String getLocationArea() {
         return locationArea;
     }
@@ -38,6 +45,7 @@ public class TableEstablishment extends AbstractEntity{
         this.locationArea = locationArea;
     }
 
+    @NonNull
     public Integer getNumberSeats() {
         return numberSeats;
     }

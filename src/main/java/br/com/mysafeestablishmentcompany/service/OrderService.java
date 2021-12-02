@@ -111,7 +111,7 @@ public class OrderService {
         if (Objects.isNull(order) || quantity < 0 ||
                 order.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
                 order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)) {
-            throw new Exception("Não foi possivel alterar");
+            throw new Exception(String.format("Pedido com Status: %s - Não é possivel alterar", order.getStatus()));
         }
         order.setQuantity(quantity);
         calculateOrder(order);
@@ -124,7 +124,7 @@ public class OrderService {
         if (Objects.isNull(orderDTO) ||
                 order.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
                 order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)){
-            throw new Exception("Não foi possivel deletar");
+            throw new Exception(String.format("Pedido com Status: %s - Não é possivel deletar", order.getStatus()));
         }
         orderRepository.delete(order);
         return new MessageResponse("Order deletada com sucesso");
