@@ -6,6 +6,7 @@ import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import br.com.mysafeestablishmentcompany.exception.TableEstablishmentNotFoundException;
 import br.com.mysafeestablishmentcompany.repository.TableEstablishmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class TableService {
     }
 
     public ArrayList<TableEstablishment> allTableEstablishments() throws Exception {
-        ArrayList<TableEstablishment> tablesDTO = tableEstablishmentRepository.findAll();
+        ArrayList<TableEstablishment> tablesDTO = tableEstablishmentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         if (Objects.isNull(tablesDTO)) {
             throw new TableEstablishmentNotFoundException("Nenhuma mesa encontrada");
         }
