@@ -32,7 +32,7 @@ public class OrderPadController {
     }
 
     @PostMapping("/manual/payment/{ordepadId}/{customerId}")
-    public OrderPad paymentOrderPad(@PathVariable("ordepadId") long ordepadId, @PathVariable("customerId") long customerId) throws Exception {
+    public CloseOrderPadResponse paymentOrderPad(@PathVariable("ordepadId") long ordepadId, @PathVariable("customerId") long customerId) throws Exception {
         return orderPadService.closeManualPaymentOrderPad(ordepadId, customerId);
     }
 

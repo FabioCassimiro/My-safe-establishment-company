@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.controller;
 
 import br.com.mysafeestablishmentcompany.api.request.PaymentOrderPadByManualRequest;
+import br.com.mysafeestablishmentcompany.api.response.CloseOrderPadResponse;
 import br.com.mysafeestablishmentcompany.domain.Order;
 import br.com.mysafeestablishmentcompany.domain.OrderPad;
 import br.com.mysafeestablishmentcompany.repository.OrderRepository;
@@ -45,7 +46,7 @@ public class ManagementController {
     }
 
     @GetMapping("orderpad")
-    public OrderPad orderpadById(@RequestParam(required = false, name = "id") Long orderPad) {
+    public CloseOrderPadResponse orderpadById(@RequestParam(required = false, name = "id") Long orderPad) {
         return orderPadService.orderpadsById(orderPad);
     }
 

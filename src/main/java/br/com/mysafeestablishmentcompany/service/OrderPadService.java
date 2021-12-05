@@ -115,16 +115,20 @@ public class OrderPadService {
         return orderPad;
     }
 
-    public OrderPad closeManualPaymentOrderPad(Long orderpadId ,Long customerId) throws Exception {
+    public CloseOrderPadResponse closeManualPaymentOrderPad(Long orderpadId ,Long customerId) throws Exception {
         Customer customer = findCustomer(customerId);
         OrderPad orderPad = orderPadRepository.findOrderPadById(orderpadId);
+        ArrayList<Order> orders = orderRepository.findByOrderPadId(orderPad.getId());
+        if (orders.stream().anyMatch(order -> !order.getStatus().equals("3"))) {
+            throw new Exception("Ainda ha pedido(s) não entregues");
+        }
         if (Objects.equals(orderPad.getId(), orderpadId)){
             orderPad.setRate(Precision.round(orderPad.getValue() * CompanyUtils.TAX_RATE, 2));
             double orderPadTotalValue = Precision.round(orderPad.getValue() + orderPad.getRate() + orderPad.getTip(), 2);
             orderPad.setValue(orderPadTotalValue);
             orderPad.setPaybleValue(orderPadTotalValue);
             orderPad.setStatus(CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
-            return orderPadRepository.save(orderPad);
+            return new CloseOrderPadResponse(orderPadRepository.save(orderPad),orders);
         }
         throw new Exception("Erro de pagamento manual");
     }
@@ -201,8 +205,8 @@ public class OrderPadService {
         return (List<OrderPad>) orderPadRepository.findAll();
     }
 
-    public OrderPad orderpadsById(Long orderpadId){
-        return orderPadRepository.findOrderPadById(orderpadId);
+    public CloseOrderPadResponse orderpadsById(Long orderpadId){
+        return new CloseOrderPadResponse(orderPadRepository.findOrderPadById(orderpadId),orderRepository.findByOrderPadId(orderpadId));
     }
 
     public OrderPad orderPadByCustomerId(long customerId) throws Exception {
