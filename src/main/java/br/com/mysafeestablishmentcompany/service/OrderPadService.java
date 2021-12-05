@@ -119,6 +119,10 @@ public class OrderPadService {
         Customer customer = findCustomer(customerId);
         OrderPad orderPad = orderPadRepository.findOrderPadById(orderpadId);
         if (Objects.equals(orderPad.getId(), orderpadId)){
+            orderPad.setRate(Precision.round(orderPad.getValue() * CompanyUtils.TAX_RATE, 2));
+            double orderPadTotalValue = Precision.round(orderPad.getValue() + orderPad.getRate() + orderPad.getTip(), 2);
+            orderPad.setValue(orderPadTotalValue);
+            orderPad.setPaybleValue(orderPadTotalValue);
             orderPad.setStatus(CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
             return orderPadRepository.save(orderPad);
         }
