@@ -39,11 +39,8 @@ public class OrderController {
         return orderService.updateOrder(orderId, orderpadId, quantity);
     }
 
-    @DeleteMapping("delete")
-    public MessageResponse delete(@RequestBody Order order) throws Exception {
-        return orderService.deleteOrder(order);
+    @DeleteMapping("delete/order")
+    public MessageResponse deleteOrder(@RequestParam(name = "id") Long orderId, @RequestParam Long orderpadId) throws Exception {
+        return orderService.deleteOrder(orderId, orderpadId);
     }
-
-//    TODO: ALTERAÇÃO DE QUANTIDADE DE PRODUTOS ENQUANTO O STATUS FOR ACCEPTED
-//    TODO: APAGAR PEDIDO ENQUANTO O STATUS FOR ACCEPTED
 }

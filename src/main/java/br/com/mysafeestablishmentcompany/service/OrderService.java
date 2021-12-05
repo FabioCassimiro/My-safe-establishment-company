@@ -119,14 +119,16 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public MessageResponse deleteOrder(Order order) throws Exception {
-        Order orderDTO = orderRepository.findOrderById(order.getId());
-        if (Objects.isNull(orderDTO) ||
-                order.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
-                order.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)){
-            throw new Exception(String.format("Pedido com Status: %s - Não é possivel deletar", order.getStatus()));
+    public MessageResponse deleteOrder(Long orderId, Long orderpadId) throws Exception {
+        Order orderDTO = orderRepository.findOrderByIdAndOrderPadId(orderId, orderpadId);
+        if (Objects.isNull(orderDTO)) {
+            throw new Exception("Pedido não encontrado - Não é possivel deletar");
         }
-        orderRepository.delete(order);
+        if (orderDTO.getStatus().equals(CompanyUtils.ORDER_STATUS_DELIVERED) ||
+                orderDTO.getStatus().equals(CompanyUtils.ORDER_STATUS_IN_DELIVERY)) {
+            throw new Exception(String.format("Pedido com Status: %s - Não é possivel deletar", orderDTO.getStatus()));
+        }
+        orderRepository.delete(orderDTO);
         return new MessageResponse("Order deletada com sucesso");
     }
 }
