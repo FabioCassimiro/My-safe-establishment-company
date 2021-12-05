@@ -117,7 +117,7 @@ public class OrderPadService {
 
     public OrderPad closeManualPaymentOrderPad(Long orderpadId ,Long customerId) throws Exception {
         Customer customer = findCustomer(customerId);
-        OrderPad orderPad = findOrderPadAwaitingPayment(customer.getId());
+        OrderPad orderPad = orderPadRepository.findOrderPadById(orderpadId);
         if (Objects.equals(orderPad.getId(), orderpadId)){
             orderPad.setStatus(CompanyUtils.ORDERPAD_STATUS_AWAITING_MANUAL_PAYMENT);
             return orderPadRepository.save(orderPad);
