@@ -202,6 +202,7 @@ public class OrderPadService {
     }
 
     public List<OrderPad> orderpads(String status){
+        logger.info("Status: {}", status);
         if (status.equals("none")){
             return (List<OrderPad>)orderPadRepository.findAll();
         } else {
