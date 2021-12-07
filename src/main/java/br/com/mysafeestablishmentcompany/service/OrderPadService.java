@@ -201,8 +201,12 @@ public class OrderPadService {
         return orderPadRepository.findAllByStatus(status);
     }
 
-    public List<OrderPad> orderpads(){
-        return (List<OrderPad>) orderPadRepository.findAll();
+    public List<OrderPad> orderpads(String status){
+        if (status.equals("none")){
+            return (List<OrderPad>)orderPadRepository.findAll();
+        } else {
+            return orderPadRepository.findAllByStatus(status);
+        }
     }
 
     public CloseOrderPadResponse orderpadsById(Long orderpadId){
