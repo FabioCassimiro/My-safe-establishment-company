@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.controller;
 
 import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
+import br.com.mysafeestablishmentcompany.api.response.TableEstablishmentResponse;
 import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import br.com.mysafeestablishmentcompany.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class TableController {
     }
 
     @GetMapping("/tables")
-    public ArrayList<TableEstablishment> allTables() throws Exception {
+    public TableEstablishmentResponse allTables() throws Exception {
         return tableService.allTableEstablishments();
     }
 

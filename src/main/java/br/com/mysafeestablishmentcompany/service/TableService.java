@@ -1,6 +1,7 @@
 package br.com.mysafeestablishmentcompany.service;
 
 import br.com.mysafeestablishmentcompany.api.response.MessageResponse;
+import br.com.mysafeestablishmentcompany.api.response.TableEstablishmentResponse;
 import br.com.mysafeestablishmentcompany.domain.CompanyUtils;
 import br.com.mysafeestablishmentcompany.domain.TableEstablishment;
 import br.com.mysafeestablishmentcompany.exception.TableEstablishmentNotFoundException;
@@ -59,12 +60,14 @@ public class TableService {
         return tableEstablishmentRepository.save(tableEstablishment);
     }
 
-    public ArrayList<TableEstablishment> allTableEstablishments() throws Exception {
+    public TableEstablishmentResponse allTableEstablishments() throws Exception {
         ArrayList<TableEstablishment> tablesDTO = tableEstablishmentRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         if (Objects.isNull(tablesDTO)) {
             throw new TableEstablishmentNotFoundException("Nenhuma mesa encontrada");
         }
-        return tablesDTO;
+        int avaliable  = tableEstablishmentRepository.findTableEstablishmentByStatusTable(CompanyUtils.TABLE_STATUS_NOT_AVAILABLE).stream().mapToInt(TableEstablishment::getNumberSeats).sum();
+        int total = tablesDTO.stream().mapToInt(TableEstablishment::getNumberSeats).sum();
+        return new TableEstablishmentResponse(tablesDTO,total,avaliable);
     }
 
     public TableEstablishment tableById(Long id) throws Exception {

@@ -11,6 +11,8 @@ public interface TableEstablishmentRepository extends CrudRepository<TableEstabl
 
     TableEstablishment findByIdAndStatusTable(long tableId, String status);
 
+    List<TableEstablishment> findTableEstablishmentByStatusTable(String status);
+
     ArrayList<TableEstablishment> findAll();
 
     TableEstablishment findTableEstablishmentById(long tableId);
