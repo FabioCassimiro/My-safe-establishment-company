@@ -43,6 +43,9 @@ public class TableService {
         }
         tableEstablishmentRepository.delete(tableDTO);
         tableDTO = tableEstablishmentRepository.findTableEstablishmentById(id);
+
+
+        System.out.println();
         if (Objects.nonNull(tableDTO)) {
             throw new Exception(String.format("Mesa: %s não foi deletada", id));
         }
